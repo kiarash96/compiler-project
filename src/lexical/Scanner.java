@@ -58,7 +58,6 @@ public class Scanner {
 
             case 12:
             case 15:
-            case 20:
                 revertForward();
                 return new SymbolToken(getLexeme());
 
@@ -137,14 +136,12 @@ public class Scanner {
                     state = 6;
                 else if (ch == '/')
                     state = 8;
-                else if (";,[]{}()<*/".indexOf(ch) > -1)
+                else if (";,[]{}()<+-*/".indexOf(ch) > -1)
                     state = 13;
                 else if (ch == '=')
                     state = 14;
                 else if (ch == '&')
                     state = 17;
-                else if (ch == '+' || ch == '-')
-                    state = 19;
                 else {
                     printError(ch);
                     reset();
@@ -213,13 +210,6 @@ public class Scanner {
                     printError(ch);
                     reset();
                 }
-                break;
-
-            case 19:
-                if (Character.isDigit(ch))
-                    state = 3;
-                else
-                    state = 20;
                 break;
         }
 
