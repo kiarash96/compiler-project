@@ -1,4 +1,4 @@
-int abc;
+int abc/**//*salaaam*/efg;
 int efg;
 int arr[200];
 int main(int x, int y[]) {
@@ -14,4 +14,8 @@ int main(int x, int y[]) {
         }
     }
     return 0;
+    234abc} void
+    int a = 12+32;
+    if ( a &= b)
+    +bs^
 }

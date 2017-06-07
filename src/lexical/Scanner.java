@@ -9,7 +9,10 @@ import java.util.Arrays;
  */
 public class Scanner {
 
+    private final static String delimiters = " ;,[]{}()=&<+-*/";
+
     private InputStream input;
+    private int line, column;
 
     private static final int BUFFER_SIZE = 64;
     private byte[] buffer;
@@ -20,6 +23,8 @@ public class Scanner {
 
     public Scanner(InputStream input) {
         this.input = input;
+        line = 1;
+        column = 1;
         buffer = new byte[BUFFER_SIZE];
         lb = 0;
         forward = BUFFER_SIZE - 1;
@@ -28,8 +33,7 @@ public class Scanner {
     }
 
     public Token getNextToken() throws IOException {
-        lb = (forward + 1) % BUFFER_SIZE;
-        state = 0;
+        reset();
 
         while (!nextState()); // go until reaching a final state or error
 
@@ -91,11 +95,22 @@ public class Scanner {
                     buffer[offset + count] = 0;
             }
         }
-        else
-            revertFlag = false;
 
         forward = (forward + 1) % BUFFER_SIZE;
-        return (char)buffer[forward];
+
+        char ch = (char)buffer[forward];
+        if (!revertFlag) {
+            if (ch == '\n') {
+                line++;
+                column = 1;
+            } else
+                column ++;
+        }
+
+        if (revertFlag)
+            revertFlag = false;
+
+        return ch;
     }
 
     private void revertForward() {
@@ -103,8 +118,12 @@ public class Scanner {
         revertFlag = true;
     }
 
+    private void reset() {
+        lb = (forward + 1) % BUFFER_SIZE;
+        state = 0;
+    }
+
     private boolean nextState() throws IOException {
-        // TODO: error handling?
         char ch = moveForward();
         switch (state) {
             case 0:
@@ -126,6 +145,10 @@ public class Scanner {
                     state = 17;
                 else if (ch == '+' || ch == '-')
                     state = 19;
+                else {
+                    printError(ch);
+                    reset();
+                }
                 break;
 
             case 1:
@@ -138,8 +161,12 @@ public class Scanner {
             case 3:
                 if (Character.isDigit(ch))
                     state = 3;
-                else
+                else if (delimiters.indexOf(ch) > -1)
                     state = 4;
+                else {
+                    printError(ch);
+                    reset();
+                }
                 break;
 
             case 6:
@@ -172,7 +199,6 @@ public class Scanner {
                     state = 9;
                 break;
 
-
             case 14:
                 if (ch == '=')
                     state = 16;
@@ -183,6 +209,10 @@ public class Scanner {
             case 17:
                 if (ch == '&')
                     state = 18;
+                else {
+                    printError(ch);
+                    reset();
+                }
                 break;
 
             case 19:
@@ -194,5 +224,10 @@ public class Scanner {
         }
 
         return Arrays.asList(2, 4, 5, 7, 11, 12, 13, 15, 16, 18, 20).contains(state);
+    }
+
+    private void printError(char ch) {
+        System.out.println("Lexical error near line " + line + " column " + (column - 1)
+        + ": Invalid character " + ch);
     }
 }
