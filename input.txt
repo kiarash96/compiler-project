@@ -15,7 +15,8 @@ int main(int x, int y[]) {
     }
     return 0;
     234abc} void
-    int a = 12+32;
+    int a = 12+ + 32;
+    int b = 12 +3;
     if ( a &= b)
     +bs^
 }

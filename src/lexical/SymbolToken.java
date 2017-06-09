@@ -24,9 +24,11 @@ public class SymbolToken extends Token {
     }
 
     SymbolType symbolType;
+    boolean followedBySpace;
 
-    public SymbolToken(String lexeme) {
+    public SymbolToken(String lexeme, boolean followedBySpace) {
         this.tokenType = TokenType.SYMBOL;
+        this.followedBySpace = followedBySpace;
         switch (lexeme) {
             case ";":
                 this.symbolType = SymbolType.SEMICOLON;
@@ -81,5 +83,9 @@ public class SymbolToken extends Token {
 
     public SymbolType getSymbolType() {
         return symbolType;
+    }
+
+    public boolean isFollowedBySpace() {
+        return followedBySpace;
     }
 }

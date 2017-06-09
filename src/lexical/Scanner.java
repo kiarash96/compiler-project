@@ -59,12 +59,19 @@ public class Scanner {
             case 12:
             case 15:
                 revertForward();
-                return new SymbolToken(getLexeme());
+                return new SymbolToken(getLexeme(), false);
 
-            case 13:
             case 16:
             case 18:
-                return new SymbolToken(getLexeme());
+                return new SymbolToken(getLexeme(), false);
+
+            case 19:
+                revertForward();
+                return new SymbolToken(getLexeme(), true);
+
+            case 20:
+                revertForward();
+                return new SymbolToken(getLexeme(), false);
 
         }
         return new Token();
@@ -196,6 +203,13 @@ public class Scanner {
                     state = 9;
                 break;
 
+            case 13:
+                if (Character.isWhitespace(ch))
+                    state = 19;
+                else
+                    state = 20;
+                break;
+
             case 14:
                 if (ch == '=')
                     state = 16;
@@ -213,7 +227,7 @@ public class Scanner {
                 break;
         }
 
-        return Arrays.asList(2, 4, 5, 7, 11, 12, 13, 15, 16, 18, 20).contains(state);
+        return Arrays.asList(2, 4, 5, 7, 11, 12, 15, 16, 18, 19, 20).contains(state);
     }
 
     private void printError(char ch) {
