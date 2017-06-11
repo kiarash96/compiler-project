@@ -4,7 +4,7 @@ package lexical;
  * Created by kiarash on 5/29/17.
  */
 public class Token {
-    public enum TokenType {
+    public enum TokenType{
         ID,     // both user identifiers and keywords
         NUMBER,
         SYMBOL,
