@@ -14,6 +14,9 @@ public class KeywordToken extends Token{
         ELSE,
         WHILE,
         RETURN,
+
+        // not a keyword
+        INVALID,
     }
     KeywordType keywordType;
     String lexeme;
@@ -40,10 +43,12 @@ public class KeywordToken extends Token{
             case "return":
                 keywordType =KeywordToken.KeywordType.RETURN;
                 break;
+            default:
+                keywordType = KeywordType.INVALID;
         }
     }
 
-    public KeywordType getIDType() {
+    public KeywordType getKeywordType() {
         return keywordType;
     }
 

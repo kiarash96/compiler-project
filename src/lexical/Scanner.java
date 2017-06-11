@@ -51,7 +51,10 @@ public class Scanner {
 
             case 7:
                 revertForward();
-                return new IDToken(getLexeme());
+                KeywordToken kwToken = new KeywordToken(getLexeme());
+                if (kwToken.getKeywordType() == KeywordToken.KeywordType.INVALID)
+                    return new IDToken(getLexeme());
+                return kwToken;
 
             case 11:
                 return getNextToken(); // ignore comment token
