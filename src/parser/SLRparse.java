@@ -68,6 +68,9 @@ public class SLRparse {
             }
         }
     }
+    public void Declaration(String NT){
+        if(NT.equals())
+    }
     private void panicMode() throws IOException {//shak daaram!
         while (true) {
             int state = (Integer) st.peek();

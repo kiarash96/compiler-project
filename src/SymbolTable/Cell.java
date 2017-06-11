@@ -1,10 +1,9 @@
-package parser;
+package SymbolTable;
 
 import lexical.IDToken;
 
-import static parser.Cell.Type.Int;
 
-public class Cell{
+public class Cell {
     public IDToken token;
     private int occurredLine;
     public int scope;
@@ -14,7 +13,7 @@ public class Cell{
         Function,
         Int
     }
-    public Type cellType=Int;
+    public Type cellType=Cell.Type.Int;
 
     public Cell(IDToken token, int line, int scope, int memoryAddress){
         this.token=token;

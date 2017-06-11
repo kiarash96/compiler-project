@@ -1,11 +1,9 @@
-package parser;
+package SymbolTable;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import lexical.IDToken;
 import lexical.Token;
-
 import java.util.*;
-
+import SymbolTable.Cell;
 /**
  * Created by User on 6/11/2017.
  */
