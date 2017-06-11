@@ -32,16 +32,55 @@ public class SLRparse {
             row= (Integer) st.peek();
 
             String action= table.actionTable[row][col];
+
             if(action.equals("acc")){
                 System.out.println("accept");
                 break;
+            }
+            if(action.isEmpty()){
+                System.out.println("ERROR: wrong input, Ignore it until correct input");
+                while (true){
+                    int state=(Integer)st.peek();
+                    List<Integer> ans= new ArrayList<>();
+
+                    for(int i=0; i<table.gotoTable[state].length; i++)
+                    {
+                        if(table.gotoTable[state][i]!=0)
+                            ans.add(i);
+                    }
+                    if(!ans.isEmpty()){
+//                        System.out.println(state);
+                        boolean handled=false;
+                        while(!handled){
+                            Token next= scanner.getNextToken();
+//                            System.out.println(next.getSpecificType());
+                            for(int i=0; i<ans.size();i++){
+                                if(Arrays.asList(table.follows[ans.get(i)]).indexOf(next.getSpecificType()) != -1){
+                                    handled=true;
+                                    nextToken=next;
+                                    st.push(table.gotoHead[ans.get(i)]);
+                                    st.push(table.gotoTable[state][ans.get(i)]);
+                                    System.out.println(st);
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    else{
+                        System.out.println("");
+                        pop(2,st);
+                    }
+                }
+                flag=false;
+                continue;
             }
             switch (action.charAt(0)){
                 case 's':
                     flag=true;
                     action=action.replace("s","");
                     int state= Integer.parseInt(action);
-                    st.push(nextToken.getTokenType());
+                    st.push(nextToken.getSpecificType());
                     st.push(state);
                     System.out.println(st);
                     break;

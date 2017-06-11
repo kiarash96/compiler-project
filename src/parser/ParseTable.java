@@ -57,4 +57,9 @@ public class ParseTable {
             {"", "r3", "r3", "", "r3", "r3"},
             {"", "r5", "r5", "", "r5", "r5"}
     };
+    public Object[][] follows= new Object[][]{
+            {SymbolToken.SymbolType.PLUS, SymbolToken.SymbolType.CLOSE_PARENTHESIS, Token.TokenType.EOF},
+            {SymbolToken.SymbolType.PLUS, SymbolToken.SymbolType.CLOSE_PARENTHESIS, SymbolToken.SymbolType.STAR, Token.TokenType.EOF},
+            {SymbolToken.SymbolType.PLUS, SymbolToken.SymbolType.CLOSE_PARENTHESIS, SymbolToken.SymbolType.STAR, Token.TokenType.EOF}
+    };
 }
