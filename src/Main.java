@@ -14,7 +14,6 @@ public class Main {
     public static void main(String[] args) throws IOException {
         java.util.Scanner stdin = new java.util.Scanner(System.in);
         Scanner scanner = new Scanner(new FileInputStream("input.txt"));
-        // array[2][0].isEmpty()
 
         SLRparse p= new SLRparse();
         p.parse();
