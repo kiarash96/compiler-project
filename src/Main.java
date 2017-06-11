@@ -14,7 +14,12 @@ public class Main {
     public static void main(String[] args) throws IOException {
         java.util.Scanner stdin = new java.util.Scanner(System.in);
         Scanner scanner = new Scanner(new FileInputStream("input.txt"));
+        System.out.println(scanner.peekToken().getSpecificType());
 
+        System.out.println(scanner.getNextToken().getSpecificType());
+
+        System.out.println(scanner.getNextToken().getSpecificType());
+        System.out.println(scanner.getNextToken().getSpecificType());
         SLRparse p= new SLRparse();
         p.parse();
 

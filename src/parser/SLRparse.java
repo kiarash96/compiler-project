@@ -1,9 +1,9 @@
 package parser;
 
+import SymbolTable.SymbolTable;
 import lexical.*;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
@@ -16,6 +16,8 @@ public class SLRparse {
     private ParseTable table= new ParseTable();
     lexical.Scanner scanner = new lexical.Scanner(new FileInputStream("test.txt"));
     Token nextToken=scanner.getNextToken();
+    SymbolTable symboltable= new SymbolTable();
+    CodeGenerator cg= new CodeGenerator(symboltable);
 
     public SLRparse() throws IOException {
     }
@@ -57,6 +59,7 @@ public class SLRparse {
                     action=action.replace("r","");
                     int redGrammar = Integer.parseInt(action);
                     String LHS= table.grammar[redGrammar-1][0];
+                    cg.TACgenerate(LHS,scanner.peekToken());
                     int RHS= Integer.parseInt(table.grammar[redGrammar-1][1]);
                     pop(2*RHS,st);
                     int gotoRow=(Integer)st.peek();
@@ -68,9 +71,7 @@ public class SLRparse {
             }
         }
     }
-    public void Declaration(String NT){
-        if(NT.equals())
-    }
+
     private void panicMode() throws IOException {//shak daaram!
         while (true) {
             int state = (Integer) st.peek();

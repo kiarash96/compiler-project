@@ -20,6 +20,7 @@ public class Scanner {
     private int lb, forward;
     private boolean revertFlag;
     private int state;
+    private boolean isGetToken=true;
 
     public Scanner(InputStream input) {
         this.input = input;
@@ -31,8 +32,60 @@ public class Scanner {
         revertFlag = false;
         state = 0;
     }
+    public Token peekToken() throws IOException {
+        isGetToken=false;
+        while (!nextState()); // go until reaching a final state or error
+
+        switch (state) {
+            case 2:
+                revertForward();
+                return peekToken(); // whitespace
+
+            case 4:
+                revertForward();
+                return new NumberToken(getLexeme());
+
+            case 5:
+                return new Token(Token.TokenType.EOF);
+
+            case 7:
+                revertForward();
+                KeywordToken kwToken = new KeywordToken(getLexeme());
+                if (kwToken.getKeywordType() == KeywordToken.KeywordType.INVALID)
+                    return new IDToken(getLexeme());
+                return kwToken;
+
+            case 11:
+                return peekToken(); // ignore comment token
+
+            case 12:
+            case 15:
+                revertForward();
+                return new SymbolToken(getLexeme(), false);
+
+            case 16:
+            case 18:
+                return new SymbolToken(getLexeme(), false);
+
+            case 19:
+                revertForward();
+                return new SymbolToken(getLexeme(), true);
+
+            case 20:
+                revertForward();
+                return new SymbolToken(getLexeme(), false);
+
+        }
+        return new Token();
+    }
 
     public Token getNextToken() throws IOException {
+        if(!isGetToken)
+        {
+            Token t=peekToken();
+            isGetToken=true;
+            return t;
+        }
         reset();
 
         while (!nextState()); // go until reaching a final state or error

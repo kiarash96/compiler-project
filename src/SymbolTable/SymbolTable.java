@@ -12,7 +12,9 @@ public class SymbolTable {
     public static int memLine=0;
     public List<Cell> table=new ArrayList<>();
     private static Stack<Integer> scopeStack= new Stack<>();
-
+    public SymbolTable(){
+        scopeStack.add(0);
+    }
     public Cell addToTable(Token token){
         int a=2;
         if(token.getTokenType()==Token.TokenType.ID){
@@ -43,5 +45,25 @@ public class SymbolTable {
             }
         }
         return false;
+    }
+    public Cell findByLexeme(String s){
+        for( int i= table.size()-1; i>=0; i--){ // ba farze inke scope haye faal faghat hastand neveshte shode
+            IDToken tblToken=table.get(i).token;
+            if(tblToken.getLexeme().equals(s))
+            {
+                return table.get(i);
+            }
+        }
+        return null;
+    }
+    public Cell findByMemoryAdress(int adr){
+        Cell c;
+        for (int i=0; i< table.size(); i++){
+            c=table.get(i);
+            if(c.getMemAdr()==adr){
+                return c;
+            }
+        }
+        return null;
     }
 }

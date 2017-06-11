@@ -7,6 +7,7 @@ public class Cell {
     public IDToken token;
     private int occurredLine;
     public int scope;
+    public int size=1;
     private int memoryAddress;
     public enum Type{
         Array,
@@ -20,5 +21,8 @@ public class Cell {
         this.occurredLine=line;
         this.scope=scope;
         this.memoryAddress=memoryAddress;
+    }
+    public int getMemAdr(){
+        return memoryAddress;
     }
 }
