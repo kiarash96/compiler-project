@@ -14,15 +14,8 @@ public class Main {
     public static void main(String[] args) throws IOException {
         java.util.Scanner stdin = new java.util.Scanner(System.in);
         Scanner scanner = new Scanner(new FileInputStream("input.txt"));
-        String[][] array = new String[][]{
-                {"s1","2"},
-                {"3",""},
-                {"","6"}
-        };
-       // array[1][1].charAt(0)=="r".charAt(0)
         // array[2][0].isEmpty()
-        //Character.getNumericValue(array[1][1].charAt(1))
-        //array[1][1].equals("acc")
+
         SLRparse p= new SLRparse();
         p.parse();
 

@@ -1,6 +1,8 @@
 package parser;
 
 import lexical.Scanner;
+import lexical.SymbolToken;
+import lexical.Token;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,8 +39,9 @@ public class ParseTable {
             {"Factor","3"},
             {"Factor", "1"}
     };
-    public String[] symbols= new String[]{
-            "id", "+", "*", "(", ")", "$"
+    public Object[] actionTableHead= new Object[]{
+            Token.TokenType.ID, SymbolToken.SymbolType.PLUS, SymbolToken.SymbolType.STAR, SymbolToken.SymbolType.OPEN_PARENTHESIS,
+            SymbolToken.SymbolType.CLOSE_PARENTHESIS, Token.TokenType.EOF
     };
     public String [][] actionTable= new String[][]{
             {"s5", "", "", "s4", "", ""},
