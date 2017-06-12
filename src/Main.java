@@ -21,20 +21,23 @@ public class Main {
 
 
 //        while (true) {
-//            Token token = scanner.getNextToken();
-//            if (token.getTokenType() == Token.TokenType.EOF)
-//                break;
-//            else if (token.getTokenType() == Token.TokenType.KEYWORD)
-//                System.out.println("Keyword: " + ((KeywordToken) token).getKeywordType().name());
-//            else if (token.getTokenType() == Token.TokenType.ID)
-//                System.out.println("ID: " + ((IDToken)token).getLexeme());
-//            else if (token.getTokenType() == Token.TokenType.NUMBER)
-//                System.out.println("Number: " + ((NumberToken) token).getValue());
-//            else if (token.getTokenType() == Token.TokenType.SYMBOL)
-//                System.out.println("Symbol: " + ((SymbolToken) token).getSymbolType().toString()
-//                + " FollowedBySpace: " + ((SymbolToken) token).isFollowedBySpace());
-//            //System.out.println("Buffer: " + new String(scanner.buffer).replace('\n', ' ').replace((char)0, '!'));
-//            //stdin.next();
+//            for (Token token : Arrays.asList(scanner.getNextToken(), scanner.peekToken())) {
+//                if (token.getTokenType() == Token.TokenType.KEYWORD)
+//                    System.out.println("Keyword: " + ((KeywordToken) token).getKeywordType().name());
+//                else if (token.getTokenType() == Token.TokenType.ID)
+//                    System.out.println("ID: " + ((IDToken) token).getLexeme());
+//                else if (token.getTokenType() == Token.TokenType.NUMBER)
+//                    System.out.println("Number: " + ((NumberToken) token).getValue());
+//                else if (token.getTokenType() == Token.TokenType.SYMBOL)
+//                    System.out.println("Symbol: " + ((SymbolToken) token).getSymbolType().toString()
+//                            + " FollowedBySpace: " + ((SymbolToken) token).isFollowedBySpace());
+//                else if (token.getTokenType() == Token.TokenType.EOF) {
+//                    System.out.println("End of input!");
+//                    return;
+//                }
+//                //System.out.println("Buffer: " + new String(scanner.buffer).replace('\n', ' ').replace((char)0, '!'));
+//                //stdin.next();
+//            }
 //
 //        }
     }

@@ -20,9 +20,10 @@ public class Scanner {
     private int lb, forward;
     private boolean revertFlag;
     private int state;
-    private boolean isGetToken=true;
 
-    public Scanner(InputStream input) {
+    private Token[] nextTokens;
+
+    public Scanner(InputStream input) throws IOException {
         this.input = input;
         line = 1;
         column = 1;
@@ -31,13 +32,27 @@ public class Scanner {
         forward = BUFFER_SIZE - 1;
         revertFlag = false;
         state = 0;
-    }
-    public Token peekToken() throws IOException {
+        nextTokens = new Token[2];
 
-        return new Token();
+        shiftNextToken();
+    }
+
+    public Token peekToken() throws IOException {
+        return nextTokens[1];
     }
 
     public Token getNextToken() throws IOException {
+        shiftNextToken();
+        return nextTokens[0];
+    }
+
+    private void shiftNextToken() throws IOException {
+        nextTokens[0] = nextTokens[1];
+        if (nextTokens[0] == null || nextTokens[0].getTokenType() != Token.TokenType.EOF)
+            nextTokens[1] = readNextToken();
+    }
+
+    private Token readNextToken() throws IOException {
         reset();
 
         while (!nextState()); // go until reaching a final state or error
@@ -45,7 +60,7 @@ public class Scanner {
         switch (state) {
             case 2:
                 revertForward();
-                return getNextToken(); // whitespace
+                return readNextToken(); // whitespace
 
             case 4:
                 revertForward();
@@ -62,7 +77,7 @@ public class Scanner {
                 return kwToken;
 
             case 11:
-                return getNextToken(); // ignore comment token
+                return readNextToken(); // ignore comment token
 
             case 12:
             case 15:
