@@ -19,16 +19,21 @@ public class CodeGenerator {
     private SymbolTable table;
     public static int tempMem=500;
     public CodeGenerator(SymbolTable table){
+        PB.add("");//reserve to jump to main in future
         this.table=table;
     }
     public void TACgenerate(String gr, Token nextToken){
         int op1,op2,type1, type2, t;
         switch (gr){
             case "NEWID":
+                System.out.println("NEWID");
+                System.out.println(nextToken.getSpecificType());
                 Cell newCell=table.addToTable(nextToken);
-                semanticStack.add(newCell.getMemAdr());
+                semanticStack.push(newCell.getMemAdr());
+                ssType.push(1);
                 break;
             case "NEWARR":
+                System.out.println("NEWARR");
                 // age nextToken number nabud error bede!
                 SymbolTable.memLine+= ((NumberToken)nextToken).getValue()-1;
                 int adr= semanticStack.pop();
@@ -36,17 +41,25 @@ public class CodeGenerator {
                 Cell c=table.findByMemoryAdress(adr);
                 c.cellType=Cell.Type.Array;
                 c.size=((NumberToken)nextToken).getValue();
-                SymbolTable.progLine++;
+
                 break;
             case "POP":
+                System.out.println("POP");
                 semanticStack.pop();
                 ssType.pop();
-                SymbolTable.progLine++;
                 break;
             case "PID":
                 // tarif shodane ghablesh check beshe
                 Cell id=table.findByLexeme(((IDToken)nextToken).getLexeme());
                 semanticStack.push(id.getMemAdr());
+                ssType.push(1);
+                break;
+            case "PARR":
+                int index=semanticStack.pop();
+                int base=semanticStack.pop();
+                ssType.pop();ssType.pop();
+                adr=base+4*index;
+                semanticStack.push(adr);
                 ssType.push(1);
                 break;
             case "ADD":
@@ -58,7 +71,7 @@ public class CodeGenerator {
                 PB.add("(ADD, "+signedPrint(op1, type1)+", "+signedPrint(op2, type2)+", "+ t+ ")");
                 semanticStack.push(t);
                 ssType.push(1);
-                SymbolTable.Memory[t/4]=SymbolTable.Memory[op1/4]+SymbolTable.Memory[op2/4];
+                SymbolTable.Memory[t/4]=rightValue(op1, type1)+rightValue(op2, type2);
                 break;
             case "MULT":
                 op1=semanticStack.pop();
@@ -69,7 +82,7 @@ public class CodeGenerator {
                 PB.add("(MULT, "+signedPrint(op1, type1)+", "+signedPrint(op2, type2)+", "+ t+ ")");
                 semanticStack.push(t);
                 ssType.push(1);
-                SymbolTable.Memory[t/4]=SymbolTable.Memory[op1/4]*SymbolTable.Memory[op2/4];
+                SymbolTable.Memory[t/4]= rightValue(op1, type1) *  rightValue(op2, type2);
                 break;
             case "DIV":
                 op1=semanticStack.pop();
@@ -99,8 +112,81 @@ public class CodeGenerator {
                 type1=ssType.pop();
                 type2=ssType.pop();
                 PB.add("(ASSIGN, "+signedPrint(op1, type1)+", "+signedPrint(op2, type2)+")");
-                //TODO
+                SymbolTable.Memory[op2/4]=rightValue(op1,type1);
                 break;
+            case "LESS":
+                op1=semanticStack.pop();
+                op2=semanticStack.pop();
+                type1=ssType.pop();
+                type2=ssType.pop();
+                t=getTemp();
+                if(rightValue(op1, type1)> rightValue(op2, type2)){//true
+                        SymbolTable.Memory[t/4]=1;
+                }else{
+                        SymbolTable.Memory[t/4]=0;
+                }
+                PB.add("(LT, "+signedPrint(op2,type2)+", "+signedPrint(op1,type1)+", "+t+")");
+                semanticStack.push(t);
+                ssType.push(1);
+                break;
+            case "EQUAL":
+                op1=semanticStack.pop();
+                op2=semanticStack.pop();
+                type1=ssType.pop();
+                type2=ssType.pop();
+                t=getTemp();
+                if(rightValue(op1, type1)== rightValue(op2, type2)){//true
+                    SymbolTable.Memory[t/4]=1;
+                }else{
+                    SymbolTable.Memory[t/4]=0;
+                }
+                PB.add("(EQ, "+signedPrint(op2,type2)+", "+signedPrint(op1,type1)+", "+t+")");
+                semanticStack.push(t);
+                ssType.push(1);
+                break;
+            case "AND":
+                op1=semanticStack.pop();
+                op2=semanticStack.pop();
+                type1=ssType.pop();
+                type2=ssType.pop();
+                t=getTemp();
+                if(rightValue(op1, type1)!=0 && rightValue(op2, type2)!=0){//true
+                    SymbolTable.Memory[t/4]=1;
+                }else{
+                    SymbolTable.Memory[t/4]=0;
+                }
+                PB.add("(AND, "+signedPrint(op2,type2)+", "+signedPrint(op1,type1)+", "+t+")");
+                semanticStack.push(t);
+                ssType.push(1);
+                break;
+            case "CHECKSIGN"://Error handling
+                if(((SymbolToken)nextToken).isFollowedBySpace()){
+                    System.out.println("LEXICAL ERROR: Between number sign and value should not be space. Compiler Deletes it.");
+                }
+                break;
+            case "PUSHNUM":
+                semanticStack.push(((NumberToken)nextToken).getValue());
+                ssType.push(2);
+                break;
+
+            case "PUSHNEGNUM":
+                semanticStack.push(-((NumberToken)nextToken).getValue());
+                ssType.push(2);
+                break;
+            case "JPMAIN": // az avale barname beparim be main!
+                int main=semanticStack.peek();
+                Cell mainFunc=table.findByMemoryAdress(main);
+                if(mainFunc.token.getLexeme().equals("main")){
+                    PB.set(0, "(JP, "+PB.size()+")");
+                }
+                break;
+            case "PRINT":
+                //TODO ERROR HANDLING: check if ss[top] is a number it can be void function!!!
+                op1=semanticStack.pop();
+                type1=ssType.pop();
+                PB.add("(PRINT, "+rightValue(op1, type1)+")");
+                break;
+
         }
         System.out.println("ss : "+semanticStack);
     }

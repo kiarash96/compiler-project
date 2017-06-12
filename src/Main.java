@@ -15,13 +15,12 @@ public class Main {
     public static void main(String[] args) throws IOException {
         java.util.Scanner stdin = new java.util.Scanner(System.in);
         Scanner scanner = new Scanner(new FileInputStream("test.txt"));
+//        SLRparse p= new SLRparse();
+//        p.parse();
 
-        SLRparse p= new SLRparse();
-        p.parse();
-
-
+//
 //        while (true) {
-//            for (Token token : Arrays.asList(scanner.getNextToken(), scanner.peekToken())) {
+//            for (Token token : Arrays.asList(scanner.peekToken(), scanner.getNextToken())) {
 //                if (token.getTokenType() == Token.TokenType.KEYWORD)
 //                    System.out.println("Keyword: " + ((KeywordToken) token).getKeywordType().name());
 //                else if (token.getTokenType() == Token.TokenType.ID)

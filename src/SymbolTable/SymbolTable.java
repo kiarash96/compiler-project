@@ -7,6 +7,7 @@ import SymbolTable.Cell;
 /**
  * Created by User on 6/11/2017.
  */
+//TODO bara tarife id jadid faghat scope feeli baiad check beshe!!
 public class SymbolTable {
     public static int[] Memory= new int [1000];
     public static int progLine=0;

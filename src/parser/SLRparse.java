@@ -15,7 +15,7 @@ public class SLRparse {
     private Stack st = new Stack();
     private ParseTable table= new ParseTable();
     lexical.Scanner scanner = new lexical.Scanner(new FileInputStream("test.txt"));
-    Token nextToken=scanner.getNextToken();
+    Token nextToken;
     SymbolTable symboltable= new SymbolTable();
     CodeGenerator cg= new CodeGenerator(symboltable);
 
@@ -25,10 +25,11 @@ public class SLRparse {
     public void parse() throws IOException {
         int row, col;
         st.push(0);
-        boolean flag=false; //get new token or not
         while(true){
-            if(flag)
-                nextToken= scanner.getNextToken();
+            nextToken= scanner.peekToken();
+            if(nextToken.getSpecificType()== SymbolToken.SymbolType.SEMICOLON)
+                SymbolTable.progLine++; // ezafe shodan yek khat be barname!
+
             col=Arrays.asList(table.actionTableHead).indexOf(nextToken.getSpecificType());
             row= (Integer) st.peek();
 
@@ -42,20 +43,18 @@ public class SLRparse {
             if(action.isEmpty()){
                 System.out.println("ERROR: wrong input: "+nextToken.getSpecificType()+"\nIgnore it until correct input");
                 panicMode();
-                flag=false;
                 continue;
             }
             switch (action.charAt(0)){
                 case 's':
-                    flag=true;
                     action=action.replace("s","");
                     int state= Integer.parseInt(action);
+                    scanner.getNextToken();
                     st.push(nextToken.getSpecificType());
                     st.push(state);
-                    System.out.println(st);
+                    System.out.println("Shift "+ state+"\nParse Stack: "+st);
                     break;
                 case 'r':
-                    flag=false;
                     action=action.replace("r","");
                     int redGrammar = Integer.parseInt(action);
                     String LHS= table.grammar[redGrammar-1][0];
@@ -66,7 +65,7 @@ public class SLRparse {
                     st.push(LHS);
                     int gotoCol=Arrays.asList(table.gotoHead).indexOf(LHS);
                     st.push(table.gotoTable[gotoRow][gotoCol]);
-                    System.out.println(st);
+                    System.out.println("Reduce to "+redGrammar+" LHS: "+LHS+" \nParse Stack:"+st);
                     break;
             }
         }
