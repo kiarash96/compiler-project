@@ -8,6 +8,7 @@ import SymbolTable.Cell;
  * Created by User on 6/11/2017.
  */
 public class SymbolTable {
+    public static int[] Memory= new int [1000];
     public static int progLine=0;
     public static int memLine=0;
     public List<Cell> table=new ArrayList<>();
@@ -24,8 +25,8 @@ public class SymbolTable {
                 System.out.println("ERROR: ID has been declared before");
             }
             else{
-                Cell n= new Cell((IDToken) token, progLine,scopeStack.peek() ,memLine);
-                memLine+=4;
+                Cell n= new Cell((IDToken) token, progLine,scopeStack.peek() ,4*memLine);
+                memLine+=1;
                 table.add(n);
                 return n;
             }

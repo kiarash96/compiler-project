@@ -29,7 +29,6 @@ public class SLRparse {
         while(true){
             if(flag)
                 nextToken= scanner.getNextToken();
-
             col=Arrays.asList(table.actionTableHead).indexOf(nextToken.getSpecificType());
             row= (Integer) st.peek();
 
@@ -37,6 +36,7 @@ public class SLRparse {
 
             if(action.equals("acc")){
                 System.out.println("accept");
+                System.out.println(cg.PB);
                 break;
             }
             if(action.isEmpty()){

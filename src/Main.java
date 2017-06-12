@@ -1,3 +1,4 @@
+import SymbolTable.SymbolTable;
 import lexical.*;
 import lexical.Scanner;
 import parser.SLRparse;
@@ -13,31 +14,28 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) throws IOException {
         java.util.Scanner stdin = new java.util.Scanner(System.in);
-        Scanner scanner = new Scanner(new FileInputStream("input.txt"));
-        System.out.println(scanner.peekToken().getSpecificType());
+        Scanner scanner = new Scanner(new FileInputStream("test.txt"));
 
-        System.out.println(scanner.getNextToken().getSpecificType());
-
-        System.out.println(scanner.getNextToken().getSpecificType());
-        System.out.println(scanner.getNextToken().getSpecificType());
         SLRparse p= new SLRparse();
         p.parse();
 
-        /*while (true) {
-            Token token = scanner.getNextToken();
-            if (token.getTokenType() == Token.TokenType.EOF)
-                break;
-            else if (token.getTokenType() == Token.TokenType.KEYWORD)
-                System.out.println("Keyword: " + ((KeywordToken) token).getKeywordType().name());
-            else if (token.getTokenType() == Token.TokenType.ID)
-                System.out.println("ID: " + ((IDToken)token).getLexeme());
-            else if (token.getTokenType() == Token.TokenType.NUMBER)
-                System.out.println("Number: " + ((NumberToken) token).getValue());
-            else if (token.getTokenType() == Token.TokenType.SYMBOL)
-                System.out.println("Symbol: " + ((SymbolToken) token).getSymbolType().toString()
-                + " FollowedBySpace: " + ((SymbolToken) token).isFollowedBySpace());
-            //System.out.println("Buffer: " + new String(scanner.buffer).replace('\n', ' ').replace((char)0, '!'));
-            //stdin.next();
-        }*/
+
+//        while (true) {
+//            Token token = scanner.getNextToken();
+//            if (token.getTokenType() == Token.TokenType.EOF)
+//                break;
+//            else if (token.getTokenType() == Token.TokenType.KEYWORD)
+//                System.out.println("Keyword: " + ((KeywordToken) token).getKeywordType().name());
+//            else if (token.getTokenType() == Token.TokenType.ID)
+//                System.out.println("ID: " + ((IDToken)token).getLexeme());
+//            else if (token.getTokenType() == Token.TokenType.NUMBER)
+//                System.out.println("Number: " + ((NumberToken) token).getValue());
+//            else if (token.getTokenType() == Token.TokenType.SYMBOL)
+//                System.out.println("Symbol: " + ((SymbolToken) token).getSymbolType().toString()
+//                + " FollowedBySpace: " + ((SymbolToken) token).isFollowedBySpace());
+//            //System.out.println("Buffer: " + new String(scanner.buffer).replace('\n', ' ').replace((char)0, '!'));
+//            //stdin.next();
+//
+//        }
     }
 }

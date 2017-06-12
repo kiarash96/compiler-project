@@ -32,6 +32,7 @@ public class Token {
     public TokenType getTokenType() {
         return tokenType;
     }
+
     public Object getSpecificType() {
         switch (this.tokenType) {
             case SYMBOL:
