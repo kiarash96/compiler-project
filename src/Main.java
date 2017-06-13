@@ -2,6 +2,8 @@ import SymbolTable.SymbolTable;
 import lexical.*;
 import lexical.Scanner;
 import parser.SLRparse;
+import parser.generator.Production;
+import parser.generator.SLRTableGenerator;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,6 +15,8 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
+        new SLRTableGenerator().generate(new java.util.Scanner(new FileInputStream("grammar.txt")));
+
         java.util.Scanner stdin = new java.util.Scanner(System.in);
         Scanner scanner = new Scanner(new FileInputStream("test.txt"));
 //        SLRparse p= new SLRparse();
