@@ -53,7 +53,7 @@ Factor -> ( Expression )
 Factor -> Var
 Factor -> Call
 Factor -> NUM
-Call -> ID ( args )
+Call -> ID ( Args )
 Args -> ArgList
 Args -> ''
 ArgList -> ArgList , Expression
