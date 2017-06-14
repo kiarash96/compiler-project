@@ -29,4 +29,30 @@ public class Item {
         else
             return new Item(p, dotPos + 1);
     }
+
+    @Override
+    public String toString() {
+        String res = p.lhs + " ->";
+        for (int i = 0; i < p.rhs.length; i ++)
+            res += (dotPos == i ? " . " : " ") + p.rhs[i];
+        if (dotPos == p.rhs.length)
+            res += " .";
+        return res;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Item) {
+            Item other = (Item) o;
+            return p.equals(other.p)
+                    && dotPos == other.dotPos;
+        }
+        else
+            return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return p.hashCode() + dotPos;
+    }
 }
