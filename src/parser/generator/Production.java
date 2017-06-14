@@ -13,7 +13,7 @@ public class Production {
 
     public Production(String lhs, List<String> rhs) {
         this.lhs = new String(lhs);
-        if (rhs.size() == 0 || (rhs.size() == 1 && rhs.get(0).equals("\""))) {
+        if (rhs.size() == 0 || (rhs.size() == 1 && rhs.get(0).equals("''"))) {
             this.rhs = new String[0];
             isEpsilon = true;
         } else {
