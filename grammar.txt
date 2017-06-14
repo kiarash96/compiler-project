@@ -1,22 +1,21 @@
 Program' -> Program
-Program -> DeclarationList EOF
+Program -> DeclarationList eof
 DeclarationList -> DeclarationList Declaration
 DeclarationList -> Declaration
 Declaration -> VarDeclaration
 Declaration -> FunDeclaration
-VarDeclaration -> TypeSpecifier ID ;
-VarDeclaration -> TypeSpecifier ID [ NUM ] ;
+VarDeclaration -> TypeSpecifier NEWID id ;
+VarDeclaration -> TypeSpecifier NEWID id [ NEWARR num ] ;
 TypeSpecifier -> int
-FunDeclaration -> FunReturnType ID ( Params ) CompoundStmt
-FunReturnType -> int
-FunReturnType -> void
+FunDeclaration -> TypeSpecifier NEWID id VOIDFUNC ( Params ) START CompoundStmt
+FunDeclaration -> void NEWID id INTFUNC JPMAIN ( Params ) START CompoundStmt
 Params -> ParamList
 Params -> void
 ParamList -> ParamList , Param
 ParamList -> Param
-Param -> TypeSpecifier ID
-Param -> TypeSpecifier ID [ ]
-CompoundStmt -> { LocalDeclarations StatementList }
+Param -> TypeSpecifier PID id
+Param -> TypeSpecifier PID id [ ]
+CompoundStmt -> { BLOCKS LocalDeclarations StatementList }
 LocalDeclarations -> LocalDeclarations VarDeclaration
 LocalDeclarations -> ''
 StatementList -> StatementList Statement
@@ -26,35 +25,56 @@ Statement -> CompoundStmt
 Statement -> SelectionStmt
 Statement -> IterationStmt
 Statement -> ReturnStmt
+Statement -> output ( GenExpression ) ;
 ExpressionStmt -> Var = Expression ;
 ExpressionStmt -> ;
-SelectionStmt -> if ( GenExpression ) Statement
-SelectionStmt -> if ( GenExpression ) Statement else Statement
-IterationStmt -> while ( GenExpression ) Statement
+SelectionStmt -> if ( GenExpression ) SAVE BLOCKS Statement BLOCKE S'
+S' -> ''
+S' -> else BLOCKS JPF_SAVE Statement
+IterationStmt -> while LABEL ( GenExpression ) SAVE BLOCKS Statement
 ReturnStmt -> return ;
 ReturnStmt -> return GenExpression ;
-Var -> ID
-Var -> ID [ Expression ]
+Var -> PID id
+Var -> PID id [ Expression ] PARR
 GenExpression -> RelExpression
 GenExpression -> Expression
 RelExpression -> RelExpression && RelTerm
 RelExpression -> RelTerm
 RelTerm -> Expression == Expression
 RelTerm -> Expression < Expression
-Expression -> Expression AddOp Term
+Expression -> Expression + Term
+Expression -> Expression - Term
 Expression -> Term
-AddOp -> +
-AddOp -> -
-Term -> Term MulOp Factor
+Term -> Term * Factor
+Term -> Term / Factor
 Term -> Factor
-MulOp -> *
-MulOp -> /
 Factor -> ( Expression )
 Factor -> Var
 Factor -> Call
-Factor -> NUM
-Call -> ID ( Args )
-Args -> ArgList
-Args -> ''
-ArgList -> ArgList , Expression
-ArgList -> Expression
+Factor -> Num
+PUSHNUM -> ''
+PUSHNEGNUM -> ''
+PID -> ''
+JPFUNC -> ''
+JPMAIN -> ''
+NEWID -> ''
+NEWARR -> ''
+START -> ''
+INTFUNC -> ''
+VOIDFUNC -> ''
+BLOCKS -> ''
+BLOCKE -> ''
+LABEL -> ''
+SAVE -> ''
+JPF_SAVE -> ''
+PID -> ''
+PARR -> ''
+CHECKSIGN -> ''
+Num -> CHECKSIGN + PUSHNUM num
+Num -> CHECKSIGN - PUSHNEGNUM num
+Num -> PUSHNUM num
+Call -> PID id JPFUNC ( Args ) 
+Args -> ArgList 
+Args -> '' 
+ArgList -> ArgList , Expression 
+ArgList -> Expression 

@@ -1,0 +1,45 @@
+DeclarationList: eof int void
+Declaration: eof int void
+VarDeclaration: eof int void { output ; if while return id = } else
+TypeSpecifier: eof int void id ) , { output ; if while return = } else
+FunDeclaration: eof int void
+Params: )
+ParamList: ) ,
+Param: ) ,
+CompoundStmt: eof int void { output ; if while return id = else
+LocalDeclarations: eof int void { output ; if while return id = } else
+StatementList: } { output ; if while return id =
+Statement: } { output ; if while return id = else
+ExpressionStmt: } { output ; if while return id = else
+SelectionStmt: } { output ; if while return id = else
+S': } { output ; if while return id = else
+IterationStmt: } { output ; if while return id = else
+ReturnStmt: } { output ; if while return id = else
+Var: = ; ] ) == && < + - * / ,
+GenExpression: ) ;
+RelExpression: ) ; &&
+RelTerm: ) ; &&
+Expression: ; ] ) == && < + - ,
+Term: ; ] ) == && < + - * / ,
+Factor: ; ] ) == && < + - * / ,
+PUSHNUM: num
+PUSHNEGNUM: num
+PID: id
+JPFUNC: (
+JPMAIN: (
+NEWID: id
+NEWARR: num
+START: {
+INTFUNC: (
+VOIDFUNC: (
+BLOCKS: int void { output ; if while return id 
+BLOCKE: } { output ; if while return id = else
+LABEL: (
+SAVE: } { output ; if while return id
+JPF_SAVE: } { output ; if while return id
+PARR: = ; ] ) == && < + - * / ,
+CHECKSIGN: + -
+Num: ; ] ) == && < + - * / ,
+Call: ; ] ) == && < + - * / ,
+Args: )
+ArgList: ) ,

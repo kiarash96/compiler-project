@@ -4,6 +4,8 @@ import lexical.KeywordToken;
 import lexical.SymbolToken;
 import lexical.Token;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 /**
@@ -12,8 +14,13 @@ import java.util.*;
 public class SLRTableGenerator {
     List<Production> grammar;
     Map<String, Boolean> isTerminal;
+    List<String> terminals, nonterminals;
+    Map<String, List<String>> follows;
+    Map<String, Object> lexemeToTokenType;
 
-    public SLRTableGenerator(Scanner scanner) {
+    public SLRTableGenerator(String grammarFile, String followsFile) throws FileNotFoundException {
+        Scanner scanner = new Scanner(new FileInputStream(grammarFile));
+
         grammar = new ArrayList<>();
         isTerminal = new LinkedHashMap<>();
 
@@ -51,9 +58,57 @@ public class SLRTableGenerator {
                     isTerminal.put(x, true);
         }
 
+        terminals = new ArrayList<>();
+        nonterminals = new ArrayList<>();
+        for (String x : isTerminal.keySet())
+            if (isTerminal.get(x))
+                terminals.add(x);
+            else
+                nonterminals.add(x);
+
         /*for (String str : isTerminal.keySet())
             System.out.println(str + " is " + (isTerminal.get(str) ? "terminal" : "non-terminal"));
         System.out.println();*/
+
+        lexemeToTokenType = new HashMap<>();
+        lexemeToTokenType.put("id", Token.TokenType.ID);
+        lexemeToTokenType.put("num", Token.TokenType.NUMBER);
+        lexemeToTokenType.put("eof", Token.TokenType.EOF);
+        lexemeToTokenType.put("int", KeywordToken.KeywordType.INT);
+        lexemeToTokenType.put("void", KeywordToken.KeywordType.VOID);
+        lexemeToTokenType.put("if", KeywordToken.KeywordType.IF);
+        lexemeToTokenType.put("else", KeywordToken.KeywordType.ELSE);
+        lexemeToTokenType.put("while", KeywordToken.KeywordType.WHILE);
+        lexemeToTokenType.put("return", KeywordToken.KeywordType.RETURN);
+        lexemeToTokenType.put(";", SymbolToken.SymbolType.SEMICOLON);
+        lexemeToTokenType.put(",", SymbolToken.SymbolType.COMMA);
+        lexemeToTokenType.put("[", SymbolToken.SymbolType.OPEN_BRACKET);
+        lexemeToTokenType.put("]", SymbolToken.SymbolType.CLOSE_BRACKET);
+        lexemeToTokenType.put("{", SymbolToken.SymbolType.OPEN_CURLY_BRACES);
+        lexemeToTokenType.put("}", SymbolToken.SymbolType.CLOSE_CURLY_BRACES);
+        lexemeToTokenType.put("(", SymbolToken.SymbolType.OPEN_PARENTHESIS);
+        lexemeToTokenType.put(")", SymbolToken.SymbolType.CLOSE_PARENTHESIS);
+        lexemeToTokenType.put("=", SymbolToken.SymbolType.ASSIGNMENT);
+        lexemeToTokenType.put("&&", SymbolToken.SymbolType.AND_AND);
+        lexemeToTokenType.put("==", SymbolToken.SymbolType.EQUALITY);
+        lexemeToTokenType.put("<", SymbolToken.SymbolType.LESSTHAN);
+        lexemeToTokenType.put("+", SymbolToken.SymbolType.PLUS);
+        lexemeToTokenType.put("-", SymbolToken.SymbolType.MINUS);
+        lexemeToTokenType.put("*", SymbolToken.SymbolType.STAR);
+        lexemeToTokenType.put("/", SymbolToken.SymbolType.SLASH);
+
+        // read follows.txt
+        scanner = new Scanner(new FileInputStream(followsFile));
+        follows = new HashMap<>();
+        while (scanner.hasNextLine()) {
+            StringTokenizer st = new StringTokenizer(scanner.nextLine(), " ");
+            String nonterm = st.nextToken();
+            nonterm = nonterm.substring(0, nonterm.length() - 1);
+            List<String> followList = new ArrayList<>();
+            while (st.hasMoreTokens())
+                followList.add(st.nextToken());
+            follows.put(nonterm, followList);
+        }
     }
 
     public ParseTable generate() {
@@ -87,41 +142,8 @@ public class SLRTableGenerator {
         /*for (int i = 0; i < states.size(); i ++)
             System.out.println("s" + i + ":\n" + states.get(i));*/
 
-        Map<String, Object> lexemeToTokenType = new HashMap<>();
-        lexemeToTokenType.put("ID", Token.TokenType.ID);
-        lexemeToTokenType.put("NUM", Token.TokenType.NUMBER);
-        lexemeToTokenType.put("EOF", Token.TokenType.EOF);
-        lexemeToTokenType.put("int", KeywordToken.KeywordType.INT);
-        lexemeToTokenType.put("void", KeywordToken.KeywordType.VOID);
-        lexemeToTokenType.put("if", KeywordToken.KeywordType.IF);
-        lexemeToTokenType.put("else", KeywordToken.KeywordType.ELSE);
-        lexemeToTokenType.put("while", KeywordToken.KeywordType.WHILE);
-        lexemeToTokenType.put("return", KeywordToken.KeywordType.RETURN);
-        lexemeToTokenType.put(";", SymbolToken.SymbolType.SEMICOLON);
-        lexemeToTokenType.put(",", SymbolToken.SymbolType.COMMA);
-        lexemeToTokenType.put("[", SymbolToken.SymbolType.OPEN_BRACKET);
-        lexemeToTokenType.put("]", SymbolToken.SymbolType.CLOSE_BRACKET);
-        lexemeToTokenType.put("{", SymbolToken.SymbolType.OPEN_CURLY_BRACES);
-        lexemeToTokenType.put("}", SymbolToken.SymbolType.CLOSE_CURLY_BRACES);
-        lexemeToTokenType.put("(", SymbolToken.SymbolType.OPEN_PARENTHESIS);
-        lexemeToTokenType.put(")", SymbolToken.SymbolType.CLOSE_PARENTHESIS);
-        lexemeToTokenType.put("=", SymbolToken.SymbolType.ASSIGNMENT);
-        lexemeToTokenType.put("&&", SymbolToken.SymbolType.AND_AND);
-        lexemeToTokenType.put("==", SymbolToken.SymbolType.EQUALITY);
-        lexemeToTokenType.put("<", SymbolToken.SymbolType.LESSTHAN);
-        lexemeToTokenType.put("+", SymbolToken.SymbolType.PLUS);
-        lexemeToTokenType.put("-", SymbolToken.SymbolType.MINUS);
-        lexemeToTokenType.put("*", SymbolToken.SymbolType.STAR);
-        lexemeToTokenType.put("/", SymbolToken.SymbolType.SLASH);
-
         ParseTable table = new ParseTable();
-
-        List<String> terminals = new ArrayList<>(), nonterminals = new ArrayList<>();
-        for (String x : isTerminal.keySet())
-            if (isTerminal.get(x))
-                terminals.add(x);
-            else
-                nonterminals.add(x);
+        table.follows = new Object[nonterminals.size()][];
 
         table.gotoHead = new String[nonterminals.size()];
         nonterminals.toArray(table.gotoHead);
@@ -159,6 +181,13 @@ public class SLRTableGenerator {
                 else
                     table.gotoTable[myindex][nonterminals.indexOf(x)] = nextIndex;
             }
+        }
+
+        for (String nonterm : follows.keySet()) {
+            int ntindex = nonterminals.indexOf(nonterm);
+            table.follows[ntindex] = new Object[follows.get(nonterm).size()];
+            for (int i = 0; i < follows.get(nonterm).size(); i++)
+                table.follows[ntindex][i] = lexemeToTokenType.get(follows.get(nonterm).get(i));
         }
 
         return table;

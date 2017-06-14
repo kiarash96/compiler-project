@@ -17,8 +17,7 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        ParseTable table =new SLRTableGenerator(
-                new java.util.Scanner(new FileInputStream("grammar.txt"))).generate();
+        ParseTable table = new SLRTableGenerator("grammar.txt", "follow.txt").generate();
         System.out.println(table);
 
         java.util.Scanner stdin = new java.util.Scanner(System.in);
