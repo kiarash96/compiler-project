@@ -4,7 +4,6 @@ import parser.ParseTable;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.StringTokenizer;
 
 /**
  * Created by kiarash on 6/13/17.
@@ -12,11 +11,9 @@ import java.util.StringTokenizer;
 public class SLRTableGenerator {
     ArrayList<Production> grammar;
 
-    public SLRTableGenerator() {
+    public SLRTableGenerator(Scanner scanner) {
         grammar = new ArrayList<>();
-    }
 
-    public ParseTable generate(Scanner scanner) {
         String lhs = scanner.next();
         scanner.next(); // ->
         ArrayList<String> rhs = new ArrayList<>();
@@ -38,6 +35,9 @@ public class SLRTableGenerator {
                 rhs.add(next);
         }
         grammar.add(new Production(lhs, rhs));
+    }
+
+    public ParseTable generate() {
 
         return new ParseTable();
     }
