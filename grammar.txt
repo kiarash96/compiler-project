@@ -1,3 +1,4 @@
+Program' -> Program
 Program -> DeclarationList EOF
 DeclarationList -> DeclarationList Declaration
 DeclarationList -> Declaration

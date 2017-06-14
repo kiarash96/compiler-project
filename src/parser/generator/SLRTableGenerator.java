@@ -37,6 +37,10 @@ public class SLRTableGenerator {
         }
         grammar.add(new Production(lhs, rhs));
 
+        for (Production p : grammar)
+            System.out.println(p);
+        System.out.println();
+
         // set isTerminal
         for (Production p : grammar) {
             isTerminal.put(p.lhs, false);
@@ -47,15 +51,49 @@ public class SLRTableGenerator {
 
         for (String str : isTerminal.keySet())
             System.out.println(str + " is " + (isTerminal.get(str) ? "terminal" : "non-terminal"));
+        System.out.println();
     }
 
     public ParseTable generate() {
-        List<Set<Item>> states = new ArrayList<>();
+        List<State> states = new ArrayList<>();
+        states.add(createInitialState());
 
-        State s0 = new State(grammar, new Item(grammar.get(0), 0));
-        System.out.println("s0 is \n" + s0);
+        while (true) {
+            Queue<State> toAdd = new LinkedList<>();
+
+            for (State s : states) {
+                Set<String> nextSymbols = new LinkedHashSet<>();
+                for (Item i : s.items)
+                    if (!i.isReduce())
+                        nextSymbols.add(i.nextSymbol());
+
+                for (String x : nextSymbols)
+                    toAdd.add(s.nextState(grammar, x));
+            }
+
+            boolean ended = true;
+            for (State s : toAdd)
+                if (!states.contains(s)) {
+                    states.add(s);
+                    ended = false;
+                }
+
+            if (ended)
+                break;
+        }
+
+        for (int i = 0; i < states.size(); i ++)
+            System.out.println("s" + i + ":\n" + states.get(i));
 
         return new ParseTable();
     }
 
+    private State createInitialState() {
+        String startSymbol = grammar.get(0).lhs;
+        Set<Item> itemSet = new LinkedHashSet<>();
+        for (Production p : grammar)
+            if (p.lhs.equals(startSymbol))
+                itemSet.add(new Item(p, 0));
+        return new State(grammar, itemSet);
+    }
 }
