@@ -1,5 +1,6 @@
 package parser.generator;
 
+import com.sun.org.apache.xerces.internal.xni.grammars.Grammar;
 import lexical.KeywordToken;
 import lexical.SymbolToken;
 import lexical.Token;
@@ -168,9 +169,9 @@ public class SLRTableGenerator {
                     nextSymbols.add(i.nextSymbol());
 
             for (Item i : s.items)
-                if (i.isReduce()) {
-                    // todo add reduce actions for (myindex, follow(i.lhs))
-                }
+                if (i.isReduce())
+                    for (String t : follows.get(i.p.lhs))
+                        table.actionTable[myindex][terminals.indexOf(t)] = "r" + grammar.indexOf(i.p);
 
             for (String x : nextSymbols) {
                 State nextState = s.nextState(grammar, x);
@@ -188,6 +189,12 @@ public class SLRTableGenerator {
             table.follows[ntindex] = new Object[follows.get(nonterm).size()];
             for (int i = 0; i < follows.get(nonterm).size(); i++)
                 table.follows[ntindex][i] = lexemeToTokenType.get(follows.get(nonterm).get(i));
+        }
+
+        table.grammar = new String[grammar.size()][2];
+        for (int i = 0; i < grammar.size(); i ++) {
+            table.grammar[i][0] = grammar.get(i).lhs;
+            table.grammar[i][1] = String.valueOf(grammar.get(i).rhs.length);
         }
 
         return table;

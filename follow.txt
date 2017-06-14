@@ -1,3 +1,5 @@
+Program': eof
+Program: eof
 DeclarationList: eof int void
 Declaration: eof int void
 VarDeclaration: eof int void { output ; if while return id = } else

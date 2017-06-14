@@ -19,12 +19,15 @@ public class ParseTable {
     @Override
     public String toString() {
         String res = "";
+
         res += "goto table:\n" + Arrays.toString(gotoHead) + "\n";
         for (int i = 0; i < gotoTable.length; i ++)
             res += "s" + i + ": " + Arrays.toString(gotoTable[i]) + "\n";
+
         res += "\naction table:\n" + Arrays.toString(actionTableHead) + "\n";
         for (int i = 0; i < actionTable.length; i ++)
             res += "s" + i + ": " + Arrays.toString(actionTable[i]) + "\n";
+
         return res;
     }
 }
