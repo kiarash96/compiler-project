@@ -1,30 +1,7 @@
-Program -> DeclarationList EOF 
-DeclarationList -> DeclarationList Declaration | Declaration 
-Declaration -> VarDeclaration | FunDeclaration 
-VarDeclaration -> TypeSpecifier ID ; | TypeSpecifier ID [ NUM ] ; 
-TypeSpecifier -> int 
-FunDeclaration -> FunReturnType ID ( Params ) CompoundStmt 
-FunReturnType -> int | void 
-Params -> ParamList | void 
-ParamList -> ParamList , Param | Param 
-Param -> TypeSpecifier ID | TypeSpecifier ID [ ] 
-CompoundStmt -> { LocalDeclarations StatementList } 
-LocalDeclarations -> LocalDeclarations VarDeclaration | 𝜀 
-StatementList -> StatementList Statement | 𝜀 
-Statement -> ExpressionStmt | CompoundStmt | SelectionStmt | IterationStmt | ReturnStmt 
-ExpressionStmt -> Var = Expression ; | ; 
-SelectionStmt -> if ( GenExpression ) Statement | if ( GenExpression ) Statement else Statement 
-IterationStmt -> while ( GenExpression ) Statement 
-ReturnStmt -> return ;  | return GenExpression ; 
-Var -> ID | ID [ Expression ] 
-GenExpression -> RelExpression | Expression 
-RelExpression -> RelExpression && RelTerm | RelTerm 
-RelTerm -> Expression == Expression | Expression < Expression 
-Expression -> Expression AddOp Term | Term 
-AddOp -> + | - 
-Term -> Term MulOp Factor | Factor 
-MulOp -> * | / 
-Factor -> ( Expression ) | Var | Call | NUM 
-Call -> ID ( args ) 
-Args -> ArgList | 𝜀 
-ArgList -> ArgList , Expression | Expression 
+E' -> E
+E -> E + T
+E -> T
+T -> T * F
+T -> F
+F -> ( E )
+F -> id

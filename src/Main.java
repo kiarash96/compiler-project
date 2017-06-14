@@ -3,6 +3,7 @@ import lexical.*;
 import lexical.Scanner;
 import parser.ParseTable;
 import parser.SLRparse;
+import parser.generator.Item;
 import parser.generator.Production;
 import parser.generator.SLRTableGenerator;
 

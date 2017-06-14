@@ -2,16 +2,13 @@ package parser.generator;
 
 import parser.ParseTable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Created by kiarash on 6/13/17.
  */
 public class SLRTableGenerator {
-    ArrayList<Production> grammar;
+    List<Production> grammar;
     Map<String, Boolean> isTerminal;
 
     public SLRTableGenerator(Scanner scanner) {
@@ -47,10 +44,18 @@ public class SLRTableGenerator {
                 if (!isTerminal.containsKey(x))
                     isTerminal.put(x, true);
         }
+
+        for (String str : isTerminal.keySet())
+            System.out.println(str + " is " + (isTerminal.get(str) ? "terminal" : "non-terminal"));
     }
 
     public ParseTable generate() {
+        List<Set<Item>> states = new ArrayList<>();
+
+        State s0 = new State(grammar, new Item(grammar.get(0), 0));
+        System.out.println("s0 is \n" + s0);
 
         return new ParseTable();
     }
+
 }
