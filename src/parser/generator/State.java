@@ -13,11 +13,19 @@ public class State {
     }
 
     public State(List<Production> grammar, Item kernel) {
-        this(grammar, new HashSet<Item>(Arrays.asList(kernel)));
+        this(grammar, new LinkedHashSet<Item>(Arrays.asList(kernel)));
+    }
+
+    public State nextState(List<Production> grammar, String x) {
+        Set<Item> newItems = new LinkedHashSet<>();
+        for (Item i : items)
+            if (!i.isReduce() && i.nextSymbol().equals(x))
+                newItems.add(i.next());
+        return new State(grammar, newItems);
     }
 
     private Set<Item> closure(List<Production> grammar, Set<Item> initialSet) {
-        Set<Item> res = new HashSet<>(initialSet);
+        Set<Item> res = new LinkedHashSet<>(initialSet);
         while (true) {
             Queue<Item> toAdd = new LinkedList<>();
             for (Item item : res) {
