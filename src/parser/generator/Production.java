@@ -9,11 +9,18 @@ import java.util.StringTokenizer;
 public class Production {
     String lhs;
     String[] rhs;
+    boolean isEpsilon;
 
     public Production(String lhs, ArrayList<String> rhs) {
         this.lhs = new String(lhs);
-        this.rhs = new String[rhs.size()];
-        rhs.toArray(this.rhs);
+        if (rhs.size() == 0 || (rhs.size() == 1 && rhs.get(0).equals("\""))) {
+            this.rhs = new String[0];
+            isEpsilon = true;
+        } else {
+            this.rhs = new String[rhs.size()];
+            rhs.toArray(this.rhs);
+            isEpsilon = false;
+        }
     }
 
     @Override
