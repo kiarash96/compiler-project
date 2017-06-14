@@ -14,8 +14,6 @@ public class Production {
         this.lhs = new String(lhs);
         this.rhs = new String[rhs.size()];
         rhs.toArray(this.rhs);
-
-        System.out.println("Found production: " + this);
     }
 
     @Override

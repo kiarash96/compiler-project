@@ -3,6 +3,8 @@ package parser.generator;
 import parser.ParseTable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -10,9 +12,11 @@ import java.util.Scanner;
  */
 public class SLRTableGenerator {
     ArrayList<Production> grammar;
+    Map<String, Boolean> isTerminal;
 
     public SLRTableGenerator(Scanner scanner) {
         grammar = new ArrayList<>();
+        isTerminal = new HashMap<>();
 
         String lhs = scanner.next();
         scanner.next(); // ->
@@ -35,6 +39,14 @@ public class SLRTableGenerator {
                 rhs.add(next);
         }
         grammar.add(new Production(lhs, rhs));
+
+        // set isTerminal
+        for (Production p : grammar) {
+            isTerminal.put(p.lhs, false);
+            for (String x : p.rhs)
+                if (!isTerminal.containsKey(x))
+                    isTerminal.put(x, true);
+        }
     }
 
     public ParseTable generate() {
