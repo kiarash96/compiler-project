@@ -34,8 +34,6 @@ public class SLRparser {
         st.push(0);
         while(true){
             nextToken= scanner.peekToken();
-            if(nextToken.getSpecificType()== SymbolToken.SymbolType.SEMICOLON)
-                SymbolTable.progLine++; // ezafe shodan yek khat be barname!
 
             col=Arrays.asList(table.actionTableHead).indexOf(nextToken.getSpecificType());
             row= (Integer) st.peek();
@@ -44,11 +42,12 @@ public class SLRparser {
 
             if(action.equals("acc")){
                 System.out.println("accept");
-                System.out.println(cg.PB);
+                System.out.println(cg);
                 break;
             }
             if(action.isEmpty()){
-                System.out.println("Error\n"+ cg.PB);
+                System.out.println("Error\n");
+                System.out.println(cg);
 //                if(nextToken.getSpecificType().equals(Token.TokenType.EOF))
                     break;
 //                System.out.println("ERROR: wrong input: "+nextToken.getSpecificType()+"\nIgnore it until correct input");
@@ -60,10 +59,13 @@ public class SLRparser {
                 case 's':
                     action=action.replace("s","");
                     int state= Integer.parseInt(action);
+                    if(nextToken.getSpecificType()== SymbolToken.SymbolType.SEMICOLON  || nextToken.getSpecificType()== SymbolToken.SymbolType.OPEN_CURLY_BRACES) {
+                        SymbolTable.progLine++; // ezafe shodan yek khat be barname!
+                    }
                     scanner.getNextToken();
                     st.push(nextToken.getSpecificType());
                     st.push(state);
-                    System.out.println("Shift "+ state+"\nParse Stack: "+st);
+//                    System.out.println("Shift "+ state+"\nParse Stack: "+st);
                     break;
                 case 'r':
                     action=action.replace("r","");
@@ -76,7 +78,7 @@ public class SLRparser {
                     st.push(LHS);
                     int gotoCol=Arrays.asList(table.gotoHead).indexOf(LHS);
                     st.push(table.gotoTable[gotoRow][gotoCol]);
-                    System.out.println("Reduce to "+redGrammar+" LHS: "+LHS+" \nParse Stack:"+st);
+//                    System.out.println("Reduce to "+redGrammar+" LHS: "+LHS+" \nParse Stack:"+st);
                     break;
             }
         }

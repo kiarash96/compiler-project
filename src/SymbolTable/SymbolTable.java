@@ -27,7 +27,7 @@ public class SymbolTable {
                 System.out.println("ERROR: ID has been declared before in this scope!");
             }
             else{
-                Cell n= new Cell((IDToken) token, progLine,scopeStack.peek() ,4*memLine);
+                Cell n= new Cell((IDToken) token, progLine,scopeStack.peek() ,4*memLine, progLine);
                 memLine+=1;
                 table.add(n);
                 return n;
@@ -85,5 +85,14 @@ public class SymbolTable {
                 return;
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        String res = "Symbol Table:";
+        for( int i=0; i<table.size(); i++){
+            res+=i+"th row: "+table.get(i).toString()+"\n";
+        }
+        return res;
     }
 }

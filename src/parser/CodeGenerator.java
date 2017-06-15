@@ -24,27 +24,26 @@ public class CodeGenerator {
     }
     public void TACgenerate(String gr, Token nextToken){
         int op1,op2,type1, type2, t,size;
+        System.out.println("Symbol Action:"+gr);
+        System.out.println( table);
+//        System.out.println("ss : "+semanticStack);
         switch (gr){
             case "NEWID":
-                System.out.println("NEWID");
-                System.out.println(nextToken.getSpecificType());
+//                System.out.println("NEWID");
+//                System.out.println(nextToken.getSpecificType());
                 Cell newCell=table.addToTable(nextToken);
                 semanticStack.push(newCell.getMemAdr());
                 ssType.push(1);
                 break;
             case "NEWARR":
-                System.out.println("NEWARR");
-                // age nextToken number nabud error bede!
                 SymbolTable.memLine+= ((NumberToken)nextToken).getValue()-1;
                 int adr= semanticStack.pop();
                 ssType.pop();
                 Cell c=table.findByMemoryAdress(adr);
                 c.cellType=Cell.Type.Array;
                 c.size=((NumberToken)nextToken).getValue();
-
                 break;
             case "POP":
-                System.out.println("POP");
                 semanticStack.pop();
                 ssType.pop();
                 break;
@@ -202,13 +201,13 @@ public class CodeGenerator {
                 op2=semanticStack.pop();// while condition
                 ssType.pop();type2=ssType.pop();
                 size=PB.size();
-                PB.set(op1,"(jpf, "+signedPrint(op2,type2)+", "+size+1+")");
+                PB.set(op1,"(jpf, "+signedPrint(op2,type2)+", "+(size+1)+")");
                 PB.add("(jp, "+ signedPrint(semanticStack.pop(),ssType.pop())+")");
                 break;
             case "JPF_SAVE":
                 ssType.pop();
                 size=PB.size();
-                PB.set(semanticStack.pop(), "(jpf, "+signedPrint(semanticStack.pop(), ssType.pop())+", "+size+1+")");
+                PB.set(semanticStack.pop(), "(jpf, "+signedPrint(semanticStack.pop(), ssType.pop())+", "+(size+1)+")");
                 semanticStack.push(size);
                 PB.add("");
                 ssType.push(1);
@@ -231,7 +230,6 @@ public class CodeGenerator {
                 break;
 
         }
-        System.out.println("ss : "+semanticStack);
     }
     private int rightValue(int op1, int type1){
         switch (type1){
@@ -248,6 +246,14 @@ public class CodeGenerator {
             case 3: return "@"+adr;
             default: return "0";
         }
+    }
+    @Override
+    public String toString() {
+        String res="Program Block:\n";
+        for(int i=0; i<PB.size(); i++){
+            res+=PB.get(i)+"\n";
+        }
+        return res;
     }
     private int getTemp(){
         tempMem+=4;
