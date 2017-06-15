@@ -1,30 +1,30 @@
 Program: eof
 DeclarationList: eof int void
 Declaration: eof int void
-VarDeclaration: eof int void { output ; if while return id }
+VarDeclaration: eof int void } id ; { if while return output
 TypeSpecifier: id
 FunDeclaration: eof int void
 Params: )
 ParamList: ) ,
 Param: ) ,
-CompoundStmt: eof int void { output ; if while return id else }
-LocalDeclarations: eof int void { output ; if while return id }
-StatementList: } { output ; if while return id
-Statement: } { output ; if while return id else
-ExpressionStmt: } { output ; if while return id else
-SelectionStmt: } { output ; if while return id else
-S': } { output ; if while return id else
-IterationStmt: } { output ; if while return id else
-ReturnStmt: } { output ; if while return id else
-Var: = ; ] ) == && < + - * / ,
+CompoundStmt: eof int void } id ; { if while return output else
+LocalDeclarations: } id ; { if while return output int
+StatementList: } id ; { if while return output
+Statement: } id ; { if while return output else
+ExpressionStmt: } id ; { if while return output else
+SelectionStmt: } id ; { if while return output else
+S': } id ; { if while return output else
+IterationStmt: } id ; { if while return output else
+ReturnStmt: } id ; { if while return output else
+Var: < = ; ] ) == && + - , * /
 GenExpression: ) ;
 RelExpression: ) ; &&
 RelTerm: ) ; &&
-Expression: ; ] ) == && < + - ,
-Term: ; ] ) == && < + - * / ,
-Factor: ; ] ) == && < + - * / ,
+Expression: ; ] ) == && + - , <
+Term: ; ] ) == && + - , * / <
+Factor: ; ] ) == && + - , * / <
 PUSHNUM: num
-PUSHNUMNEG: num
+PUSHNEGNUM: num
 PID: id
 JPFUNC: (
 JPMAIN: (
@@ -33,14 +33,14 @@ NEWARR: num
 START: {
 INTFUNC: (
 VOIDFUNC: (
-BLOCKS: int { output ; if while return id
-BLOCKE: } { output ; if while return id else
+BLOCKS: id ; { if while return output int }
+BLOCKE: } id ; { if while return output else
 LABEL: (
-SAVE: { output ; if while return id
-JPF_SAVE: { output ; if while return id
-PARR: = ; ] ) == && < + - * / ,
+SAVE: id ; { if while return output
+JPF_SAVE: id ; { if while return output
+PARR: < = ; ] ) == && + - , * /
 CHECKSIGN: + -
-Num: ; ] ) == && < + - * / ,
-Call: ; ] ) == && < + - * / ,
+Num: < ; ] ) == && + - , * /
+Call: < ; ] ) == && + - , * /
 Args: )
 ArgList: ) ,
