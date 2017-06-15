@@ -170,8 +170,14 @@ public class SLRTableGenerator {
 
             for (Item i : s.items)
                 if (i.isReduce())
-                    for (String t : follows.get(i.p.lhs))
-                        table.actionTable[myindex][terminals.indexOf(t)] = "r" + grammar.indexOf(i.p);
+                    for (String t : follows.get(i.p.lhs)) {
+                        String action = "";
+                        if (grammar.indexOf(i.p) == 0)
+                            action = "acc";
+                        else
+                            action = "r" + grammar.indexOf(i.p);
+                        table.actionTable[myindex][terminals.indexOf(t)] = action;
+                    }
 
             for (String x : nextSymbols) {
                 State nextState = s.nextState(grammar, x);

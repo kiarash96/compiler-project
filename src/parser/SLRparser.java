@@ -64,9 +64,9 @@ public class SLRparser {
                 case 'r':
                     action=action.replace("r","");
                     int redGrammar = Integer.parseInt(action);
-                    String LHS= table.grammar[redGrammar-1][0];
+                    String LHS= table.grammar[redGrammar][0];
                     cg.TACgenerate(LHS,scanner.peekToken());
-                    int RHS= Integer.parseInt(table.grammar[redGrammar-1][1]);
+                    int RHS= Integer.parseInt(table.grammar[redGrammar][1]);
                     pop(2*RHS,st);
                     int gotoRow=(Integer)st.peek();
                     st.push(LHS);
