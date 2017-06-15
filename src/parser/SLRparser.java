@@ -4,6 +4,7 @@ import SymbolTable.SymbolTable;
 import lexical.*;
 import lexical.Scanner;
 import parser.generator.ParseTable;
+import parser.generator.ParserGeneratorException;
 import parser.generator.SLRTableGenerator;
 
 import java.io.FileInputStream;
@@ -22,7 +23,7 @@ public class SLRparser {
     SymbolTable symboltable= new SymbolTable();
     CodeGenerator cg= new CodeGenerator(symboltable);
 
-    public SLRparser(String testname) throws IOException {
+    public SLRparser(String testname) throws IOException, ParserGeneratorException {
         this.table = new SLRTableGenerator("tests/" + testname + "/grammar.txt",
                 "tests/" + testname + "/follow.txt").generate();
         System.out.println(table);

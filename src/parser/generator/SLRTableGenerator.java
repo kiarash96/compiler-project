@@ -18,7 +18,7 @@ public class SLRTableGenerator {
     Map<String, List<String>> follows;
     Map<String, Object> lexemeToTokenType;
 
-    public SLRTableGenerator(String grammarFile, String followsFile) throws FileNotFoundException {
+    public SLRTableGenerator(String grammarFile, String followsFile) throws FileNotFoundException, ParserGeneratorException {
         Scanner scanner = new Scanner(new FileInputStream(grammarFile));
 
         grammar = new ArrayList<>();
@@ -99,6 +99,11 @@ public class SLRTableGenerator {
         lexemeToTokenType.put("*", SymbolToken.SymbolType.STAR);
         lexemeToTokenType.put("/", SymbolToken.SymbolType.SLASH);
 
+        // check grammar.txt terminals integrity
+        for (String x : terminals)
+            if (!lexemeToTokenType.containsKey(x))
+                throw new ParserGeneratorException("Terminal " + x + " defined in grammar.txt is unknown.");
+
         // read follows.txt
         scanner = new Scanner(new FileInputStream(followsFile));
         follows = new HashMap<>();
@@ -111,9 +116,23 @@ public class SLRTableGenerator {
                 followList.add(st.nextToken());
             follows.put(nonterm, followList);
         }
+
+        // check follows.txt terminals and non-terminals integrity
+        for (String nonterm : follows.keySet()) {
+            if (!nonterminals.contains(nonterm))
+                throw new ParserGeneratorException("Non-terminal " + nonterm + " defined in follow.txt is unknown.");
+            for (String term : follows.get(nonterm))
+                if (!lexemeToTokenType.containsKey(term))
+                    throw new ParserGeneratorException("Terminal " + term + " defined in follow.txt is unknown.");
+        }
+
+        // check that follow set is defined for every non-terminal
+        for (String nonterm : nonterminals)
+            if (!follows.containsKey(nonterm))
+                throw new ParserGeneratorException("Follow set for non-terminal " + nonterm + " is undefined.");
     }
 
-    public ParseTable generate() {
+    public ParseTable generate() throws ParserGeneratorException {
         List<State> states = new ArrayList<>();
         states.add(createInitialState());
 
@@ -170,22 +189,23 @@ public class SLRTableGenerator {
                     nextSymbols.add(i.nextSymbol());
 
             for (Item i : s.items)
-                if (i.isReduce())
+                if (i.isReduce()) {
                     for (String t : follows.get(i.p.lhs)) {
                         String action = "";
                         if (grammar.indexOf(i.p) == 0)
                             action = "acc";
                         else
                             action = "r" + grammar.indexOf(i.p);
-                        table.actionTable[myindex][terminals.indexOf(t)] = action;
+                        setAction(table, myindex, t, action);
                     }
+                }
 
             for (String x : nextSymbols) {
                 State nextState = s.nextState(grammar, x);
                 int nextIndex = states.indexOf(nextState);
 
                 if (isTerminal.get(x))
-                    table.actionTable[myindex][terminals.indexOf(x)] = "s" + nextIndex;
+                    setAction(table, myindex, x, "s" + nextIndex);
                 else
                     table.gotoTable[myindex][nonterminals.indexOf(x)] = nextIndex;
             }
@@ -194,8 +214,10 @@ public class SLRTableGenerator {
         for (String nonterm : follows.keySet()) {
             int ntindex = nonterminals.indexOf(nonterm);
             table.follows[ntindex] = new Object[follows.get(nonterm).size()];
-            for (int i = 0; i < follows.get(nonterm).size(); i++)
-                table.follows[ntindex][i] = lexemeToTokenType.get(follows.get(nonterm).get(i));
+            for (int i = 0; i < follows.get(nonterm).size(); i++) {
+                String term = follows.get(nonterm).get(i);
+                table.follows[ntindex][i] = lexemeToTokenType.get(term);
+            }
         }
 
         table.grammar = new String[grammar.size()][2];
@@ -214,5 +236,23 @@ public class SLRTableGenerator {
             if (p.lhs.equals(startSymbol))
                 itemSet.add(new Item(p, 0));
         return new State(grammar, itemSet);
+    }
+
+    private void setAction(ParseTable table, int sindex, String term, String action) throws ParserGeneratorException {
+        String currentAction = table.actionTable[sindex][terminals.indexOf(term)];
+        String finalAction = action;
+
+        // conflicts
+        if (!(currentAction.equals("") || currentAction.equals(action))) {
+            if (sindex == 135 && term.equals("else"))
+                finalAction = "s139";
+            else {
+                throw new ParserGeneratorException("Conflict in [s" + sindex + ", " + term + "]"
+                        + " between " + action + " and "
+                        + currentAction);
+            }
+        }
+
+        table.actionTable[sindex][terminals.indexOf(term)] = finalAction;
     }
 }
