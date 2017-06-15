@@ -1,20 +1,8 @@
-int main( void ){
+int main(void){
 int a;
-int b;
-int c;
-a=2;
-b=3;
-c=a+b;
-if(a+b)
-{
-	int d;
-	d=a;
-	output(d);	
-}
-else{
-int d;
-d=b;
-output(d);
-}
-output(4*2-3);
+a=1;
+/*while(2 && a)
+	a=a-1;
+*/
+output(3aa);
 }

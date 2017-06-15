@@ -24,8 +24,8 @@ public class CodeGenerator {
     }
     public void TACgenerate(String gr, Token nextToken){
         int op1,op2,type1, type2, t,size;
-        System.out.println("Symbol Action:"+gr);
-        System.out.println( table);
+//        System.out.println("Symbol Action:"+gr);
+//        System.out.println( table);
 //        System.out.println("ss : "+semanticStack);
         switch (gr){
             case "NEWID":
@@ -70,7 +70,7 @@ public class CodeGenerator {
                 PB.add("(ADD, "+signedPrint(op1, type1)+", "+signedPrint(op2, type2)+", "+ t+ ")");
                 semanticStack.push(t);
                 ssType.push(1);
-                SymbolTable.Memory[t/4]=rightValue(op1, type1)+rightValue(op2, type2);
+//                SymbolTable.Memory[t/4]=rightValue(op1, type1)+rightValue(op2, type2);
                 break;
             case "MULT":
                 op1=semanticStack.pop();
@@ -81,7 +81,7 @@ public class CodeGenerator {
                 PB.add("(MULT, "+signedPrint(op1, type1)+", "+signedPrint(op2, type2)+", "+ t+ ")");
                 semanticStack.push(t);
                 ssType.push(1);
-                SymbolTable.Memory[t/4]= rightValue(op1, type1) *  rightValue(op2, type2);
+//                SymbolTable.Memory[t/4]= rightValue(op1, type1) *  rightValue(op2, type2);
                 break;
             case "DIV":
                 op1=semanticStack.pop();
@@ -92,7 +92,7 @@ public class CodeGenerator {
                 PB.add("(DIV, "+signedPrint(op1, type1)+", "+signedPrint(op2, type2)+", "+ t+ ")");
                 semanticStack.push(t);
                 ssType.push(1);
-                SymbolTable.Memory[t/4]=((Integer)rightValue(op1, type1)/rightValue(op2, type2));
+//                SymbolTable.Memory[t/4]=((Integer)rightValue(op1, type1)/rightValue(op2, type2));
                 break;
             case "SUB":
                 op1=semanticStack.pop();
@@ -103,7 +103,7 @@ public class CodeGenerator {
                 PB.add("(SUB, "+signedPrint(op1, type1)+", "+signedPrint(op2, type2)+", "+ t+ ")");
                 semanticStack.push(t);
                 ssType.push(1);
-                SymbolTable.Memory[t/4]=rightValue(op1, type1)-rightValue(op2, type2);
+//                SymbolTable.Memory[t/4]=rightValue(op1, type1)-rightValue(op2, type2);
                 break;
             case "ASSIGN":
                 op1=semanticStack.pop();
@@ -111,7 +111,7 @@ public class CodeGenerator {
                 type1=ssType.pop();
                 type2=ssType.pop();
                 PB.add("(ASSIGN, "+signedPrint(op1, type1)+", "+signedPrint(op2, type2)+")");
-                SymbolTable.Memory[op2/4]=rightValue(op1,type1);
+//                SymbolTable.Memory[op2/4]=rightValue(op1,type1);
                 break;
             case "LESS":
                 op1=semanticStack.pop();
@@ -119,11 +119,11 @@ public class CodeGenerator {
                 type1=ssType.pop();
                 type2=ssType.pop();
                 t=getTemp();
-                if(rightValue(op1, type1)> rightValue(op2, type2)){//true
-                        SymbolTable.Memory[t/4]=1;
-                }else{
-                        SymbolTable.Memory[t/4]=0;
-                }
+//                if(rightValue(op1, type1)> rightValue(op2, type2)){//true
+//                        SymbolTable.Memory[t/4]=1;
+//                }else{
+//                        SymbolTable.Memory[t/4]=0;
+//                }
                 PB.add("(LT, "+signedPrint(op2,type2)+", "+signedPrint(op1,type1)+", "+t+")");
                 semanticStack.push(t);
                 ssType.push(1);
@@ -134,11 +134,11 @@ public class CodeGenerator {
                 type1=ssType.pop();
                 type2=ssType.pop();
                 t=getTemp();
-                if(rightValue(op1, type1)== rightValue(op2, type2)){//true
-                    SymbolTable.Memory[t/4]=1;
-                }else{
-                    SymbolTable.Memory[t/4]=0;
-                }
+//                if(rightValue(op1, type1)== rightValue(op2, type2)){//true
+//                    SymbolTable.Memory[t/4]=1;
+//                }else{
+//                    SymbolTable.Memory[t/4]=0;
+//                }
                 PB.add("(EQ, "+signedPrint(op2,type2)+", "+signedPrint(op1,type1)+", "+t+")");
                 semanticStack.push(t);
                 ssType.push(1);
@@ -149,11 +149,11 @@ public class CodeGenerator {
                 type1=ssType.pop();
                 type2=ssType.pop();
                 t=getTemp();
-                if(rightValue(op1, type1)!=0 && rightValue(op2, type2)!=0){//true
-                    SymbolTable.Memory[t/4]=1;
-                }else{
-                    SymbolTable.Memory[t/4]=0;
-                }
+//                if(rightValue(op1, type1)!=0 && rightValue(op2, type2)!=0){//true
+//                    SymbolTable.Memory[t/4]=1;
+//                }else{
+//                    SymbolTable.Memory[t/4]=0;
+//                }
                 PB.add("(AND, "+signedPrint(op2,type2)+", "+signedPrint(op1,type1)+", "+t+")");
                 semanticStack.push(t);
                 ssType.push(1);
@@ -183,7 +183,7 @@ public class CodeGenerator {
                 //TODO ERROR HANDLING: check if ss[top] is a number it can be void function!!!
                 op1=semanticStack.pop();
                 type1=ssType.pop();
-                PB.add("(PRINT, "+rightValue(op1, type1)+")");
+                PB.add("(PRINT, "+signedPrint(op1,type1)+")");
                 break;
             case "LABEL":
                 size= PB.size();
@@ -231,14 +231,14 @@ public class CodeGenerator {
 
         }
     }
-    private int rightValue(int op1, int type1){
+/*    private int rightValue(int op1, int type1){
         switch (type1){
             case 1: return SymbolTable.Memory[op1/4];
             case 2: return op1;
             case 3: return SymbolTable.Memory[SymbolTable.Memory[op1/4]/4];
             default: return 0;
         }
-    }
+    }*/
     private String signedPrint(int adr, int type){
         switch (type){
             case 1: return String.valueOf(adr);
