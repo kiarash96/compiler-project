@@ -2,7 +2,9 @@ package parser;
 
 import SymbolTable.SymbolTable;
 import lexical.*;
+import lexical.Scanner;
 import parser.generator.ParseTable;
+import parser.generator.SLRTableGenerator;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,16 +14,19 @@ import java.util.*;
  * Created by Yeganeh on 6/11/2017.
  */
 
-public class SLRparse {
+public class SLRparser {
     private Stack st = new Stack();
     private ParseTable table;
-    lexical.Scanner scanner = new lexical.Scanner(new FileInputStream("test.txt"));
+    lexical.Scanner scanner;
     Token nextToken;
     SymbolTable symboltable= new SymbolTable();
     CodeGenerator cg= new CodeGenerator(symboltable);
 
-    public SLRparse(ParseTable table) throws IOException {
-        this.table = table;
+    public SLRparser(String testname) throws IOException {
+        this.table = new SLRTableGenerator("tests/" + testname + "/grammar.txt",
+                "tests/" + testname + "/follow.txt").generate();
+        System.out.println(table);
+        this.scanner = new Scanner(new FileInputStream("tests/" + testname + "/input.txt"));
     }
 
     public void parse() throws IOException {

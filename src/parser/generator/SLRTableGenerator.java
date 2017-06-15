@@ -66,6 +66,7 @@ public class SLRTableGenerator {
                 terminals.add(x);
             else
                 nonterminals.add(x);
+        terminals.add("eof");
 
         /*for (String str : isTerminal.keySet())
             System.out.println(str + " is " + (isTerminal.get(str) ? "terminal" : "non-terminal"));
