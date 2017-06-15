@@ -81,6 +81,7 @@ public class SLRTableGenerator {
         lexemeToTokenType.put("else", KeywordToken.KeywordType.ELSE);
         lexemeToTokenType.put("while", KeywordToken.KeywordType.WHILE);
         lexemeToTokenType.put("return", KeywordToken.KeywordType.RETURN);
+        lexemeToTokenType.put("output", KeywordToken.KeywordType.OUTPUT);
         lexemeToTokenType.put(";", SymbolToken.SymbolType.SEMICOLON);
         lexemeToTokenType.put(",", SymbolToken.SymbolType.COMMA);
         lexemeToTokenType.put("[", SymbolToken.SymbolType.OPEN_BRACKET);

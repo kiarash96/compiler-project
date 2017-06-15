@@ -14,6 +14,7 @@ public class KeywordToken extends Token{
         ELSE,
         WHILE,
         RETURN,
+        OUTPUT,
 
         // not a keyword
         INVALID,
@@ -42,6 +43,9 @@ public class KeywordToken extends Token{
                 break;
             case "return":
                 keywordType =KeywordToken.KeywordType.RETURN;
+                break;
+            case "output":
+                keywordType = KeywordType.OUTPUT;
                 break;
             default:
                 keywordType = KeywordType.INVALID;
