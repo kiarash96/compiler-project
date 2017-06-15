@@ -17,12 +17,13 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
+
         ParseTable table = new SLRTableGenerator("grammar.txt", "follow.txt").generate();
         System.out.println(table);
 
-        java.util.Scanner stdin = new java.util.Scanner(System.in);
-        Scanner scanner = new Scanner(new FileInputStream("test.txt"));
-//        SLRparse p= new SLRparse();
+//        java.util.Scanner stdin = new java.util.Scanner(System.in);
+//        Scanner scanner = new Scanner(new FileInputStream("test.txt"));
+//        SLRparse p= new SLRparse(table);
 //        p.parse();
 
 //

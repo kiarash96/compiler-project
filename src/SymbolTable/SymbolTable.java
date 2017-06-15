@@ -17,13 +17,14 @@ public class SymbolTable {
     public SymbolTable(){
         scopeStack.add(0);
     }
+
     public Cell addToTable(Token token){
         int a=2;
         if(token.getTokenType()==Token.TokenType.ID){
 
-            if(contains((IDToken)token)){
+            if(containsThisScope((IDToken)token)){
                 // TODO Error handling. id declared for second time
-                System.out.println("ERROR: ID has been declared before");
+                System.out.println("ERROR: ID has been declared before in this scope!");
             }
             else{
                 Cell n= new Cell((IDToken) token, progLine,scopeStack.peek() ,4*memLine);
@@ -38,11 +39,11 @@ public class SymbolTable {
         return null;
     }
 
-    public boolean contains(IDToken token){
+    public boolean containsThisScope(IDToken token){
         for (int i=0; i< table.size(); i++){
             IDToken tblToken=table.get(i).token;
             if(tblToken.getLexeme().equals(token.getLexeme())){
-                if(scopeStack.contains(table.get(i).scope))
+                if(scopeStack.peek()==table.get(i).scope)
                     return true;
             }
         }
@@ -67,5 +68,22 @@ public class SymbolTable {
             }
         }
         return null;
+    }
+    public int newScope(){
+        scopeStack.push(progLine);
+        return progLine;
+    }
+    public void deleteScope(){
+        int lastScope=scopeStack.pop();
+        for( int i= table.size()-1; i>=0; i--){
+            Cell tblToken=table.get(i);
+            if(tblToken.scope == lastScope)
+            {
+                table.remove(i);
+            }
+            else{
+                return;
+            }
+        }
     }
 }
