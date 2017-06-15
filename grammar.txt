@@ -1,5 +1,4 @@
-Program' -> Program
-Program -> DeclarationList eof
+Program -> DeclarationList
 DeclarationList -> DeclarationList Declaration
 DeclarationList -> Declaration
 Declaration -> VarDeclaration
@@ -67,7 +66,6 @@ BLOCKE -> ''
 LABEL -> ''
 SAVE -> ''
 JPF_SAVE -> ''
-PID -> ''
 PARR -> ''
 CHECKSIGN -> ''
 Num -> CHECKSIGN + PUSHNUM num
