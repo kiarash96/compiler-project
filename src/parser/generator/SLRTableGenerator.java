@@ -1,6 +1,5 @@
 package parser.generator;
 
-import com.sun.org.apache.xerces.internal.xni.grammars.Grammar;
 import lexical.KeywordToken;
 import lexical.SymbolToken;
 import lexical.Token;

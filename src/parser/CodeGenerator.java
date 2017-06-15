@@ -23,7 +23,7 @@ public class CodeGenerator {
         this.table=table;
     }
     public void TACgenerate(String gr, Token nextToken){
-        int op1,op2,type1, type2, t;
+        int op1,op2,type1, type2, t,size;
         switch (gr){
             case "NEWID":
                 System.out.println("NEWID");
@@ -185,6 +185,49 @@ public class CodeGenerator {
                 op1=semanticStack.pop();
                 type1=ssType.pop();
                 PB.add("(PRINT, "+rightValue(op1, type1)+")");
+                break;
+            case "LABEL":
+                size= PB.size();
+                semanticStack.push(size);
+                ssType.push(1);
+                break;
+            case "SAVE":
+                size= PB.size();
+                PB.add("");
+                semanticStack.push(size);
+                ssType.push(1);
+                break;
+            case "WHILE":
+                op1=semanticStack.pop();// where we write jpf
+                op2=semanticStack.pop();// while condition
+                ssType.pop();type2=ssType.pop();
+                size=PB.size();
+                PB.set(op1,"(jpf, "+signedPrint(op2,type2)+", "+size+1+")");
+                PB.add("(jp, "+ signedPrint(semanticStack.pop(),ssType.pop())+")");
+                break;
+            case "JPF_SAVE":
+                ssType.pop();
+                size=PB.size();
+                PB.set(semanticStack.pop(), "(jpf, "+signedPrint(semanticStack.pop(), ssType.pop())+", "+size+1+")");
+                semanticStack.push(size);
+                PB.add("");
+                ssType.push(1);
+                break;
+            case "JPF":
+                ssType.pop();
+                size=PB.size();
+                PB.set(semanticStack.pop(), "(jpf, "+signedPrint(semanticStack.pop(), ssType.pop())+", "+size+")");
+                break;
+            case "JP":
+                ssType.pop();
+                size=PB.size();
+                PB.set(semanticStack.pop(), "(jp, "+size+")");
+                break;
+            case "BLOCKS":
+                table.newScope();
+                break;
+            case "BLOCKE":
+                table.deleteScope();
                 break;
 
         }
