@@ -20,11 +20,10 @@ public class KeywordToken extends Token{
         INVALID,
     }
     KeywordType keywordType;
-    String lexeme;
 
-    public KeywordToken(String lexeme) {
+    public KeywordToken(String lexeme, int line, int column) {
+        super(lexeme, line, column);
         this.tokenType = TokenType.KEYWORD;
-        this.lexeme = lexeme;
         switch (lexeme) {
             case "int":
                 keywordType = KeywordToken.KeywordType.INT;

@@ -6,7 +6,8 @@ package lexical;
 public class NumberToken extends Token {
     int value;
 
-    public NumberToken(String lexeme) {
+    public NumberToken(String lexeme, int line, int column) {
+        super(lexeme, line, column);
         this.tokenType = TokenType.NUMBER;
         this.value = Integer.valueOf(lexeme);
     }

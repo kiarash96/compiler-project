@@ -1,5 +1,7 @@
 package lexical;
 
+import errors.ErrorLogger;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -64,16 +66,16 @@ public class Scanner {
 
             case 4:
                 revertForward();
-                return new NumberToken(getLexeme());
+                return new NumberToken(getLexeme(), line, column);
 
             case 5:
                 return new Token(Token.TokenType.EOF);
 
             case 7:
                 revertForward();
-                KeywordToken kwToken = new KeywordToken(getLexeme());
+                KeywordToken kwToken = new KeywordToken(getLexeme(), line, column);
                 if (kwToken.getKeywordType() == KeywordToken.KeywordType.INVALID)
-                    return new IDToken(getLexeme());
+                    return new IDToken(getLexeme(), line, column);
                 return kwToken;
 
             case 11:
@@ -82,22 +84,22 @@ public class Scanner {
             case 12:
             case 15:
                 revertForward();
-                return new SymbolToken(getLexeme(), false);
+                return new SymbolToken(getLexeme(), false, line, column);
 
             case 16:
             case 18:
-                return new SymbolToken(getLexeme(), false);
+                return new SymbolToken(getLexeme(), false, line, column);
 
             case 19:
                 revertForward();
-                return new SymbolToken(getLexeme(), true);
+                return new SymbolToken(getLexeme(), true, line, column);
 
             case 20:
                 revertForward();
-                return new SymbolToken(getLexeme(), false);
+                return new SymbolToken(getLexeme(), false, line, column);
 
         }
-        return new Token();
+        return new Token("", line, column);
     }
 
     private String getLexeme() {
@@ -254,7 +256,7 @@ public class Scanner {
     }
 
     private void printError(char ch) {
-        System.out.println("Lexical error near line " + line + " column " + (column - 1)
-        + ": Invalid character " + ch);
+        ErrorLogger.printError(ErrorLogger.LEXICAL_ERROR,
+                new Token(String.valueOf(ch), line, column), "Unexpected character " + ch);
     }
 }

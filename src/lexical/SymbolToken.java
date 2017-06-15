@@ -26,7 +26,8 @@ public class SymbolToken extends Token {
     SymbolType symbolType;
     boolean followedBySpace;
 
-    public SymbolToken(String lexeme, boolean followedBySpace) {
+    public SymbolToken(String lexeme, boolean followedBySpace, int line, int column) {
+        super(lexeme, line, column);
         this.tokenType = TokenType.SYMBOL;
         this.followedBySpace = followedBySpace;
         switch (lexeme) {
