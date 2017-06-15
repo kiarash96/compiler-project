@@ -6,8 +6,8 @@ Declaration -> FunDeclaration
 VarDeclaration -> TypeSpecifier NEWID id ;
 VarDeclaration -> TypeSpecifier NEWID id [ NEWARR num ] ;
 TypeSpecifier -> int
-FunDeclaration -> TypeSpecifier NEWID id VOIDFUNC ( Params ) START CompoundStmt
-FunDeclaration -> void NEWID id INTFUNC JPMAIN ( Params ) START CompoundStmt
+FunDeclaration -> void NEWID id VOIDFUNC ( Params ) START CompoundStmt
+FunDeclaration -> TypeSpecifier NEWID id INTFUNC JPMAIN ( Params ) START CompoundStmt
 Params -> ParamList
 Params -> void
 ParamList -> ParamList , Param
@@ -29,8 +29,8 @@ ExpressionStmt -> Var = Expression ;
 ExpressionStmt -> ;
 SelectionStmt -> if ( GenExpression ) SAVE BLOCKS Statement BLOCKE S'
 S' -> ''
-S' -> else BLOCKS JPF_SAVE Statement
-IterationStmt -> while LABEL ( GenExpression ) SAVE BLOCKS Statement
+S' -> else BLOCKS JPF_SAVE Statement BLOCKE
+IterationStmt -> while LABEL ( GenExpression ) SAVE BLOCKS Statement BLOCKE
 ReturnStmt -> return ;
 ReturnStmt -> return GenExpression ;
 Var -> PID id

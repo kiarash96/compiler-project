@@ -48,9 +48,13 @@ public class SLRparser {
                 break;
             }
             if(action.isEmpty()){
-                System.out.println("ERROR: wrong input: "+nextToken.getSpecificType()+"\nIgnore it until correct input");
-                panicMode();
-                continue;
+                System.out.println("Error\n"+ cg.PB);
+//                if(nextToken.getSpecificType().equals(Token.TokenType.EOF))
+                    break;
+//                System.out.println("ERROR: wrong input: "+nextToken.getSpecificType()+"\nIgnore it until correct input");
+//                panicMode();
+
+//                continue;
             }
             switch (action.charAt(0)){
                 case 's':
@@ -65,7 +69,7 @@ public class SLRparser {
                     action=action.replace("r","");
                     int redGrammar = Integer.parseInt(action);
                     String LHS= table.grammar[redGrammar][0];
-                    cg.TACgenerate(LHS,scanner.peekToken());
+                    cg.TACgenerate(cgInput(LHS, redGrammar),scanner.peekToken());
                     int RHS= Integer.parseInt(table.grammar[redGrammar][1]);
                     pop(2*RHS,st);
                     int gotoRow=(Integer)st.peek();
@@ -76,6 +80,41 @@ public class SLRparser {
                     break;
             }
         }
+    }
+    private String cgInput(String LHS, int grNum){
+        switch(grNum){
+            case 5:
+                return "POP";
+            case 16:
+                return "BLOCKE";
+            case 26:
+                return "PRINT";
+            case 27:
+                return "ASSIGN";
+            case 30:
+                return "JPF";
+            case 31:
+                return "JP";
+            case 32:
+                return "WHILE";
+            case 36:
+                return "PARR";
+            case 39:
+                return "AND";
+            case 41:
+                return "EQUAL";
+            case 42:
+                return "LESS";
+            case 46:
+                return "MULT";
+            case 47:
+                return "DIV";
+            case 44:
+                return "SUB";
+            case 43:
+                return "ADD";
+        }
+        return LHS;
     }
 
     private void panicMode() throws IOException {//shak daaram!
@@ -102,7 +141,7 @@ public class SLRparser {
                             System.out.println(st);
                             break;
                         }else{
-                            System.out.println("ERROR: wrong input: "+next.getSpecificType()+"\nIgnore it until correct input");
+                            System.out.println("PANIC MODE ERROR: wrong input: "+next.getSpecificType()+"\nIgnore it until correct input");
                         }
                     }
                 }

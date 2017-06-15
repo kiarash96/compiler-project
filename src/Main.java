@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        SLRparser parser = new SLRparser("simple-expression");
+        SLRparser parser = new SLRparser("simple");
         parser.parse();
     }
 }
