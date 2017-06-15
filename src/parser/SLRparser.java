@@ -47,14 +47,13 @@ public class SLRparser {
                 break;
             }
             if(action.isEmpty()){
-                System.out.println("Error\n");
-                System.out.println(cg);
-//                if(nextToken.getSpecificType().equals(Token.TokenType.EOF))
+                System.out.println("ERROR: wrong input: "+nextToken.getSpecificType()+"\nIgnore it until correct input");
+                if(nextToken.getSpecificType().equals(Token.TokenType.EOF))
                     break;
-//                System.out.println("ERROR: wrong input: "+nextToken.getSpecificType()+"\nIgnore it until correct input");
-//                panicMode();
+                System.out.println(cg);
+                panicMode();
 
-//                continue;
+                continue;
             }
             switch (action.charAt(0)){
                 case 's':
@@ -126,32 +125,44 @@ public class SLRparser {
             List<Integer> ans = new ArrayList<>();
 
             for (int i = 0; i < table.gotoTable[state].length; i++) {
-                if (table.gotoTable[state][i] != 0)
+                if (table.gotoTable[state][i] != 0)// hame unha ke gotoshun khali nis ro dare barmigardune
                     ans.add(i);
             }
             if (!ans.isEmpty()) {
-//                        System.out.println(state);
+                        System.out.println("STATE:" +state);
                 boolean handled = false;
+                Token next;
+                scanner.getNextToken();
                 while (!handled) {
-                    Token next = scanner.getNextToken();
-//                            System.out.println(next.getSpecificType());
+                    next = scanner.peekToken();
+                    if(next.getTokenType().equals(Token.TokenType.EOF)){
+                        break;
+                    }
+                            System.out.println(next.getSpecificType());
                     for (int i = 0; i < ans.size(); i++) {
+//                        System.out.println(table.gotoHead[ans.get(i)]);
+//                        System.out.println(Arrays.asList(table.follows[ans.get(i)]));
                         if (Arrays.asList(table.follows[ans.get(i)]).indexOf(next.getSpecificType()) != -1) {
                             handled = true;
                             nextToken = next;
                             st.push(table.gotoHead[ans.get(i)]);
                             st.push(table.gotoTable[state][ans.get(i)]);
-                            System.out.println(st);
+
+                            System.out.println(table.gotoHead[ans.get(i)]);
+                            System.out.println(Arrays.asList(table.follows[ans.get(i)]));
+//                            System.out.println("Pareser Stack after panic mode"+st);
                             break;
-                        }else{
-                            System.out.println("PANIC MODE ERROR: wrong input: "+next.getSpecificType()+"\nIgnore it until correct input");
                         }
+                    }if(!handled)
+                    {
+                        System.out.println("PANIC MODE ERROR: wrong input: "+next.getSpecificType()+"\nIgnore it until correct input");
+                        scanner.getNextToken();
                     }
                 }
-                break;
+                break; //shak daram!
             } else {
-                System.out.println("");
-                pop(2, st);
+                st.pop();
+                System.out.println("PANIC MODE: Removed from parser stack: "+ st.pop());
             }
         }
     }

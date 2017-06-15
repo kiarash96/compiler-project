@@ -9,7 +9,7 @@ import SymbolTable.Cell;
  */
 //TODO bara tarife id jadid faghat scope feeli baiad check beshe!!
 public class SymbolTable {
-    public static int[] Memory= new int [1000];
+//    public static int[] Memory= new int [1000];
     public static int progLine=0;
     public static int memLine=0;
     public List<Cell> table=new ArrayList<>();

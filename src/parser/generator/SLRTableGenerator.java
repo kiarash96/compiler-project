@@ -219,7 +219,6 @@ public class SLRTableGenerator {
                 table.follows[ntindex][i] = lexemeToTokenType.get(term);
             }
         }
-
         table.grammar = new String[grammar.size()][2];
         for (int i = 0; i < grammar.size(); i ++) {
             table.grammar[i][0] = grammar.get(i).lhs;
