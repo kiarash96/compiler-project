@@ -23,10 +23,11 @@ public class CodeGenerator {
         this.table=table;
     }
     public void TACgenerate(String gr, Token nextToken){
-        int op1,op2,type1, type2, t,size;
+        int op1,op2,type1, type2, t,size, inpSize=0;
+        IDToken newInp;
 //        System.out.println("Symbol Action:"+gr);
-//        System.out.println( table);
-//        System.out.println("ss : "+semanticStack);
+        System.out.println( table); //print symbolTable
+        System.out.println("ss : "+semanticStack);
         switch (gr){
             case "NEWID":
 //                System.out.println("NEWID");
@@ -50,7 +51,10 @@ public class CodeGenerator {
             case "PID":
                 // tarif shodane ghablesh check beshe
                 Cell id=table.findByLexeme(((IDToken)nextToken).getLexeme());
-                semanticStack.push(id.getMemAdr());
+                if(id.getMemAdr()!=-1)
+                    semanticStack.push(id.getMemAdr());
+                else
+                    semanticStack.push(id.getLine());
                 ssType.push(1);
                 break;
             case "PARR":
@@ -59,6 +63,7 @@ public class CodeGenerator {
                 ssType.pop();ssType.pop();
                 adr=base+4*index;
                 semanticStack.push(adr);
+                System.out.println("PARR"+adr);
                 ssType.push(1);
                 break;
             case "ADD":
@@ -174,7 +179,7 @@ public class CodeGenerator {
                 break;
             case "JPMAIN": // az avale barname beparim be main!
                 int main=semanticStack.peek();
-                Cell mainFunc=table.findByMemoryAdress(main);
+                Cell mainFunc=table.findByLine(main);
                 if(mainFunc.token.getLexeme().equals("main")){
                     PB.set(0, "(JP, "+PB.size()+")");
                 }
@@ -228,7 +233,108 @@ public class CodeGenerator {
             case "BLOCKE":
                 table.deleteScope();
                 break;
-
+            case "INTFUNC":
+                adr =semanticStack.pop();
+                ssType.pop();
+                FunctionCell fc=table.funcAddToTable(adr, FunctionCell.returnType.Int);
+                semanticStack.push(fc.getLine());
+                ssType.push(1);
+                SymbolTable.progLine++;
+                table.newScope();
+                break;
+            case "VOIDFUNC":
+                adr =semanticStack.pop();
+                ssType.pop();
+                table.funcAddToTable(adr, FunctionCell.returnType.Void);
+                fc=table.funcAddToTable(adr, FunctionCell.returnType.Int);
+                semanticStack.push(fc.getLine());
+                ssType.push(1);
+                SymbolTable.progLine++;
+                table.newScope();
+                break;
+            case "UPDATE":
+                ssType.pop();
+                newInp= table.findByMemoryAdress(semanticStack.pop()).token;
+                fc=((FunctionCell)table.findByLine(semanticStack.peek()));
+                fc.newIntInput(table, newInp);
+                break;
+            case "UPDATEARR":
+                ssType.pop();
+                newInp= table.findByMemoryAdress(semanticStack.pop()).token;
+                fc=((FunctionCell)table.findByLine(semanticStack.peek()));
+                fc.newArrayInput(table, newInp);
+                break;
+            case "START":
+                fc=((FunctionCell)table.findByLine(semanticStack.peek()));
+                fc.startingAdr=PB.size();
+                break;
+            case "SET":
+                fc=((FunctionCell)table.findByLine(semanticStack.peek()));
+                inpSize=fc.inputNum;
+                semanticStack.push(inpSize);
+                ssType.push(inpSize);
+                System.out.println("INPUT size: "+inpSize);
+                break;
+            case "FUNCINP":
+                op1=semanticStack.pop();
+                type1=ssType.pop();
+                inpSize=semanticStack.pop();
+                inpSize--;
+                fc=((FunctionCell)table.findByLine(semanticStack.peek()));
+                System.out.println("INPUT size: "+inpSize);
+                Cell inp=fc.allInputs.get(inpSize);
+                if(fc.byValue.get(inpSize)){ //TODO check konim noe vorudi ha ba int o array tabe mikhune ya na
+                    PB.add("(ASSIGN, "+signedPrint(op1,type1)+","+inp.getMemAdr()+")");
+                }else{
+                    PB.add("(ASSIGN, "+signedPrint(op1,2)+","+inp.getMemAdr()+")");
+                }
+                semanticStack.push(inpSize);
+                break;
+            case "JPFUNC":
+                inpSize=semanticStack.pop(); ssType.pop();
+                fc=((FunctionCell)table.findByLine(semanticStack.peek()));
+                PB.add("(ASSIGN, "+ signedPrint(PB.size()+2, 2)+", "+fc.returnAdr+")"); //Assign Return Address
+                if(inpSize==0){
+                    fc.returnAdr=PB.size();
+                    PB.add("(JP, "+fc.startingAdr+")");
+                }else{
+                    //TODO number of inputs does not match function params
+                }
+                break;
+            case "INTRET": //TODO return type mathch has ba function return Type
+                op1=semanticStack.pop();
+                type1=ssType.pop();
+                fc=((FunctionCell)table.findByLine(semanticStack.pop()));
+                PB.add("(ASSIGN, "+signedPrint(op1, type1)+","+fc.returnValueAdr+")");
+                ssType.pop();
+                if(fc.retType==FunctionCell.returnType.Int){
+                    if(fc.token.getLexeme().equals( "main")){
+                        PB.add("");
+                        semanticStack.push(PB.size()-1);
+                        ssType.push(1);
+                    }
+                    PB.add("(JP,"+signedPrint(fc.returnAdr, 3)+")");
+                }else{
+                    //Err
+                }
+                break;
+            case "VOIDRET":
+                fc=((FunctionCell)table.findByLine(semanticStack.pop()));
+                ssType.pop();
+                if(fc.retType==FunctionCell.returnType.Void){
+                    PB.add("(JP,"+signedPrint(fc.returnAdr, 3)+")");
+                }else{
+                    //Err
+                }
+                break;
+            case "VOIDMATCH":
+                //TODO vaghti inja miad ke to call vorudi hichi nade. check konim vaghean tabe void bashe vorudish
+                break;
+            case "EOF":
+                op1=semanticStack.pop();
+                ssType.pop();
+                PB.set(op1, "(ASSIGN, "+PB.size()+","+((FunctionCell)table.findByLexeme("main")).returnAdr+")");
+                break;
         }
     }
 /*    private int rightValue(int op1, int type1){

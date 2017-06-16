@@ -12,8 +12,8 @@ Params -> ParamList
 Params -> void
 ParamList -> ParamList , Param
 ParamList -> Param
-Param -> TypeSpecifier PID id
-Param -> TypeSpecifier PID id [ ]
+Param -> TypeSpecifier NEWID id
+Param -> TypeSpecifier NEWID id [ ]
 CompoundStmt -> { BLOCKS LocalDeclarations StatementList }
 LocalDeclarations -> LocalDeclarations VarDeclaration
 LocalDeclarations -> ''
@@ -71,8 +71,9 @@ CHECKSIGN -> ''
 Num -> CHECKSIGN + PUSHNUM num
 Num -> CHECKSIGN - PUSHNEGNUM num
 Num -> PUSHNUM num
-Call -> PID id JPFUNC ( Args ) 
+Call -> PID id SET ( Args )
 Args -> ArgList 
 Args -> '' 
 ArgList -> ArgList , Expression 
-ArgList -> Expression 
+ArgList -> Expression
+SET -> ''

@@ -42,6 +42,7 @@ public class SLRparser {
             String action= table.actionTable[row][col];
 
             if(action.equals("acc")){
+                cg.TACgenerate("EOF",null);
                 System.out.println("accept");
                 System.out.println(cg);
                 break;
@@ -67,6 +68,7 @@ public class SLRparser {
                     st.push(state);
 //                    System.out.println("Shift "+ state+"\nParse Stack: "+st);
                     break;
+
                 case 'r':
                     action=action.replace("r","");
                     int redGrammar = Integer.parseInt(action);
@@ -85,8 +87,18 @@ public class SLRparser {
     }
     private String cgInput(String LHS, int grNum){
         switch(grNum){
+            case 0:
+                return "EOF";
             case 5:
                 return "POP";
+            case 8:
+                return "BLOCKE";
+            case 9:
+                return "BLOCKE";
+            case 14:
+                return "UPDATE";
+            case 15:
+                return "UPDATEARR";
             case 16:
                 return "BLOCKE";
             case 26:
@@ -99,8 +111,10 @@ public class SLRparser {
                 return "JP";
             case 32:
                 return "WHILE";
-            case 36:
-                return "PARR";
+            case 33:
+                return"VOIDRET";
+            case 34:
+                return "INTRET";
             case 39:
                 return "AND";
             case 41:
@@ -115,6 +129,14 @@ public class SLRparser {
                 return "SUB";
             case 43:
                 return "ADD";
+            case 73:
+                return "JPFUNC";
+            case 75:
+                return "VOIDMATCH";
+            case 76:
+                return "FUNCINP";
+            case 77:
+                return "FUNCINP";
         }
         return LHS;
     }

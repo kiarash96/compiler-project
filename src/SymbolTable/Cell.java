@@ -2,8 +2,6 @@ package SymbolTable;
 
 import lexical.IDToken;
 
-import java.util.Arrays;
-
 
 public class Cell {
     public IDToken token;
@@ -14,11 +12,12 @@ public class Cell {
     public enum Type{
         Array,
         Function,
-        Int
+        Int,
+        DynamicArray
     }
     public Type cellType=Cell.Type.Int;
 
-    public Cell(IDToken token, int line, int scope, int memoryAddress, int occurredLine){
+    public Cell(IDToken token, int line, int scope, int memoryAddress){
         this.token=token;
         this.occurredLine=line;
         this.scope=scope;
@@ -27,11 +26,12 @@ public class Cell {
     public int getMemAdr(){
         return memoryAddress;
     }
-
+    public int getLine() {return occurredLine;}
     @Override
     public String toString() {
         String res="";
         res+="NAME:"+ token.getLexeme()+", Scope: "+scope+", Memory Address: "+memoryAddress+", Line declared: "+occurredLine;
         return res;
     }
+
 }

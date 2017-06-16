@@ -14,20 +14,29 @@ public class SymbolTable {
     public static int memLine=0;
     public List<Cell> table=new ArrayList<>();
     private static Stack<Integer> scopeStack= new Stack<>();
+
     public SymbolTable(){
         scopeStack.add(0);
     }
 
+    public FunctionCell funcAddToTable(int adr, FunctionCell.returnType r){ // tabe ha to memory zakhire nemishan dge?
+        Cell c=removeByAdress(adr);
+        FunctionCell cell= new FunctionCell(c.token,progLine, scopeStack.peek(), -1, r);
+        cell.cellType= Cell.Type.Function;
+//        memLine+=1;
+        table.add(cell);
+        return cell;
+    }
     public Cell addToTable(Token token){
         int a=2;
         if(token.getTokenType()==Token.TokenType.ID){
 
             if(containsThisScope((IDToken)token)){
                 // TODO Error handling. id declared for second time
-                System.out.println("ERROR: ID has been declared before in this scope!");
+                System.out.println("ERROR:\" "+token.getLexeme()+"\" ID has been declared before in this scope!");
             }
             else{
-                Cell n= new Cell((IDToken) token, progLine,scopeStack.peek() ,4*memLine, progLine);
+                Cell n= new Cell((IDToken) token, progLine,scopeStack.peek() ,4*memLine);
                 memLine+=1;
                 table.add(n);
                 return n;
@@ -59,11 +68,33 @@ public class SymbolTable {
         }
         return null;
     }
+    public Cell removeByAdress(int adr){
+        for( int i= table.size()-1; i>=0; i--){
+            if(table.get(i).getMemAdr()==adr)
+            {
+                Cell c=table.get(i);
+                table.remove(i);
+                memLine-=1;
+                return c;
+            }
+        }
+        return null;
+    }
     public Cell findByMemoryAdress(int adr){
         Cell c;
         for (int i=0; i< table.size(); i++){
             c=table.get(i);
             if(c.getMemAdr()==adr){
+                return c;
+            }
+        }
+        return null;
+    }
+    public Cell findByLine(int l){
+        Cell c;
+        for (int i=0; i< table.size(); i++){
+            c=table.get(i);
+            if(c.getLine()==l){
                 return c;
             }
         }
@@ -80,6 +111,7 @@ public class SymbolTable {
             if(tblToken.scope == lastScope)
             {
                 table.remove(i);
+//                memLine-=1;
             }
             else{
                 return;
