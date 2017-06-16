@@ -26,8 +26,8 @@ public class CodeGenerator {
         int op1,op2,type1, type2, t,size, inpSize=0;
         IDToken newInp;
 //        System.out.println("Symbol Action:"+gr);
-        System.out.println( table); //print symbolTable
-        System.out.println("ss : "+semanticStack);
+//        System.out.println( table); //print symbolTable
+//        System.out.println("ss : "+semanticStack);
         switch (gr){
             case "NEWID":
 //                System.out.println("NEWID");
@@ -61,10 +61,18 @@ public class CodeGenerator {
                 int index=semanticStack.pop();
                 int base=semanticStack.pop();
                 ssType.pop();ssType.pop();
-                adr=base+4*index;
-                semanticStack.push(adr);
-                System.out.println("PARR"+adr);
-                ssType.push(1);
+                c=table.findByMemoryAdress(base);
+                if(c.cellType.equals(Cell.Type.DynamicArray)){
+                    System.out.println("PARR special case");
+                    t=getTemp();
+                    PB.add("(ADD, "+signedPrint(base,3)+","+(index*4)+", "+t+")");
+                    semanticStack.push(t);
+                    ssType.push(3);
+                }else{
+                    adr=base+4*index;
+                    semanticStack.push(adr);
+                    ssType.push(1);
+                }
                 break;
             case "ADD":
                 op1=semanticStack.pop();
@@ -273,7 +281,7 @@ public class CodeGenerator {
                 inpSize=fc.inputNum;
                 semanticStack.push(inpSize);
                 ssType.push(inpSize);
-                System.out.println("INPUT size: "+inpSize);
+//                System.out.println("INPUT size: "+inpSize);
                 break;
             case "FUNCINP":
                 op1=semanticStack.pop();
@@ -281,7 +289,7 @@ public class CodeGenerator {
                 inpSize=semanticStack.pop();
                 inpSize--;
                 fc=((FunctionCell)table.findByLine(semanticStack.peek()));
-                System.out.println("INPUT size: "+inpSize);
+//                System.out.println("INPUT size: "+inpSize);
                 Cell inp=fc.allInputs.get(inpSize);
                 if(fc.byValue.get(inpSize)){ //TODO check konim noe vorudi ha ba int o array tabe mikhune ya na
                     PB.add("(ASSIGN, "+signedPrint(op1,type1)+","+inp.getMemAdr()+")");
@@ -313,7 +321,7 @@ public class CodeGenerator {
                         semanticStack.push(PB.size()-1);
                         ssType.push(1);
                     }
-                    PB.add("(JP,"+signedPrint(fc.returnAdr, 3)+")");
+                    PB.add("(JP,"+signedPrint(fc.returnAdr, 1)+")");
                 }else{
                     //Err
                 }
@@ -322,7 +330,7 @@ public class CodeGenerator {
                 fc=((FunctionCell)table.findByLine(semanticStack.pop()));
                 ssType.pop();
                 if(fc.retType==FunctionCell.returnType.Void){
-                    PB.add("(JP,"+signedPrint(fc.returnAdr, 3)+")");
+                    PB.add("(JP,"+signedPrint(fc.returnAdr, 1)+")");
                 }else{
                     //Err
                 }
