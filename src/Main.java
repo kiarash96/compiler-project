@@ -9,9 +9,8 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        SLRparser parser = null;
         try {
-            parser = new SLRparser("simple");
+            SLRparser parser = new SLRparser("simple");
             parser.parse();
         } catch (ParserGeneratorException e) {
             System.out.println("Error in generating parse table: " + e.getMessage());

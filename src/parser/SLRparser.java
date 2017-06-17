@@ -33,8 +33,9 @@ public class SLRparser {
     public void parse() throws IOException {
         int row, col;
         st.push(0);
+        nextToken = scanner.getNextToken();
+
         while(true){
-            nextToken= scanner.peekToken();
 
             col=Arrays.asList(table.actionTableHead).indexOf(nextToken.getSpecificType());
             row= (Integer) st.peek();
@@ -63,7 +64,7 @@ public class SLRparser {
                     if(nextToken.getSpecificType()== SymbolToken.SymbolType.SEMICOLON  || nextToken.getSpecificType()== SymbolToken.SymbolType.OPEN_CURLY_BRACES) {
                         SymbolTable.progLine++; // ezafe shodan yek khat be barname!
                     }
-                    scanner.getNextToken();
+                    nextToken = scanner.getNextToken();
                     st.push(nextToken.getSpecificType());
                     st.push(state);
 //                    System.out.println("Shift "+ state+"\nParse Stack: "+st);
@@ -73,7 +74,7 @@ public class SLRparser {
                     action=action.replace("r","");
                     int redGrammar = Integer.parseInt(action);
                     String LHS= table.grammar[redGrammar][0];
-                    cg.TACgenerate(cgInput(LHS, redGrammar),scanner.peekToken());
+                    cg.TACgenerate(cgInput(LHS, redGrammar),nextToken);
                     int RHS= Integer.parseInt(table.grammar[redGrammar][1]);
                     pop(2*RHS,st);
                     int gotoRow=(Integer)st.peek();
@@ -154,9 +155,9 @@ public class SLRparser {
                         System.out.println("STATE:" +state);
                 boolean handled = false;
                 Token next;
-                scanner.getNextToken();
+                nextToken = scanner.getNextToken();
                 while (!handled) {
-                    next = scanner.peekToken();
+                    next = nextToken;
                     if(next.getTokenType().equals(Token.TokenType.EOF)){
                         break;
                     }
@@ -178,7 +179,7 @@ public class SLRparser {
                     }if(!handled)
                     {
                         System.out.println("PANIC MODE ERROR: wrong input: "+next.getSpecificType()+"\nIgnore it until correct input");
-                        scanner.getNextToken();
+                        nextToken = scanner.getNextToken();
                     }
                 }
                 break; //shak daram!
