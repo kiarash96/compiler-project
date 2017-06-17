@@ -16,29 +16,27 @@ import java.util.*;
  * Created by Yeganeh on 6/11/2017.
  */
 
-public class SLRparser {
-    private Stack st = new Stack();
+public class SLRParser {
+    private Stack st;
     private ParseTable table;
-    lexical.Scanner scanner;
-    Token nextToken;
-    SymbolTable symboltable= new SymbolTable();
-    CodeGenerator cg= new CodeGenerator(symboltable);
+    private lexical.Scanner scanner;
+    private Token nextToken;
+    private CodeGenerator cg;
 
-    public SLRparser(String testname) throws IOException, ParserGeneratorException {
+    public SLRParser(String testname) throws IOException, ParserGeneratorException {
+        this.st = new Stack();
         this.table = new SLRTableGenerator("grammar.txt").generate();
-        //System.out.println(table);
         this.scanner = new Scanner(new FileInputStream("tests/" + testname + ".c"));
+        this.cg = new CodeGenerator();
     }
 
     public void parse() throws IOException {
-        int row, col;
         st.push(0);
         nextToken = scanner.getNextToken();
 
         while(true){
-
-            col=Arrays.asList(table.actionTableHead).indexOf(nextToken.getSpecificType());
-            row= (Integer) st.peek();
+            int col=Arrays.asList(table.actionTableHead).indexOf(nextToken.getSpecificType());
+            int row= (Integer) st.peek();
 
             String action= table.actionTable[row][col];
 
@@ -50,9 +48,7 @@ public class SLRparser {
             }
             if(action.isEmpty()){
                 ErrorLogger.printError(ErrorLogger.SYNTAX_ERROR, nextToken, "Unexpected token.");
-                if(nextToken.getSpecificType().equals(Token.TokenType.EOF))
-                    break;
-                System.out.println(cg);
+                //System.out.println(cg);
                 panicMode();
 
                 continue;
@@ -61,6 +57,7 @@ public class SLRparser {
                 case 's':
                     action=action.replace("s","");
                     int state= Integer.parseInt(action);
+                    // TODO: remove progLine
                     if(nextToken.getSpecificType()== SymbolToken.SymbolType.SEMICOLON  || nextToken.getSpecificType()== SymbolToken.SymbolType.OPEN_CURLY_BRACES) {
                         SymbolTable.progLine++; // ezafe shodan yek khat be barname!
                     }
@@ -142,6 +139,7 @@ public class SLRparser {
         return LHS;
     }
 
+    // TODO: refactor
     private void panicMode() throws IOException {//shak daaram!
         while (true) {
             int state = (Integer) st.peek();

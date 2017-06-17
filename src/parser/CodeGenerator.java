@@ -18,9 +18,9 @@ public class CodeGenerator {
                                                   // type 3 -> gheire mostaghim @
     private SymbolTable table;
     public static int tempMem=500;
-    public CodeGenerator(SymbolTable table){
+    public CodeGenerator(){
         PB.add("");//reserve to jump to main in future
-        this.table=table;
+        this.table= new SymbolTable();
     }
     public void TACgenerate(String gr, Token nextToken){
         int op1,op2,type1, type2, t,size, inpSize=0;

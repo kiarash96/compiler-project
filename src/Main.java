@@ -1,4 +1,4 @@
-import parser.SLRparser;
+import parser.SLRParser;
 import parser.generator.ParserGeneratorException;
 
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws IOException {
         try {
-            SLRparser parser = new SLRparser("simple");
+            SLRParser parser = new SLRParser("simple");
             parser.parse();
         } catch (ParserGeneratorException e) {
             System.out.println("Error in generating parse table: " + e.getMessage());
