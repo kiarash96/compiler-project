@@ -131,13 +131,13 @@ public class SLRParser {
                 return "SUB";
             case 43:
                 return "ADD";
-            case 73:
+            case 72:
                 return "JPFUNC";
-            case 75:
+            case 74:
                 return "VOIDMATCH";
-            case 76:
+            case 75:
                 return "FUNCINP";
-            case 77:
+            case 76:
                 return "FUNCINP";
         }
         return LHS;
