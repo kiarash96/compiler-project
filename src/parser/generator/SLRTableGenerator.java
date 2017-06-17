@@ -17,7 +17,7 @@ public class SLRTableGenerator {
     Map<String, Set<String>> firsts, follows;
     Map<String, Object> lexemeToTokenType;
 
-    public SLRTableGenerator(String grammarFile, String followsFile) throws FileNotFoundException, ParserGeneratorException {
+    public SLRTableGenerator(String grammarFile) throws FileNotFoundException, ParserGeneratorException {
         Scanner scanner = new Scanner(new FileInputStream(grammarFile));
 
         grammar = new ArrayList<>();
@@ -103,41 +103,25 @@ public class SLRTableGenerator {
             if (!lexemeToTokenType.containsKey(x))
                 throw new ParserGeneratorException("Terminal " + x + " defined in grammar.txt is unknown.");
 
-        // read follows.txt
-        /*scanner = new Scanner(new FileInputStream(followsFile));
-        follows = new HashMap<>();
-        while (scanner.hasNextLine()) {
-            StringTokenizer st = new StringTokenizer(scanner.nextLine(), " ");
-            String nonterm = st.nextToken();
-            nonterm = nonterm.substring(0, nonterm.length() - 1);
-            List<String> followList = new ArrayList<>();
-            while (st.hasMoreTokens())
-                followList.add(st.nextToken());
-            follows.put(nonterm, followList);
-        }
-
-        // check follows.txt terminals and non-terminals integrity
-        for (String nonterm : follows.keySet()) {
-            if (!nonterminals.contains(nonterm))
-                throw new ParserGeneratorException("Non-terminal " + nonterm + " defined in follow.txt is unknown.");
-            for (String term : follows.get(nonterm))
-                if (!lexemeToTokenType.containsKey(term))
-                    throw new ParserGeneratorException("Terminal " + term + " defined in follow.txt is unknown.");
-        }
-
-        // check that follow set is defined for every non-terminal
-        for (String nonterm : nonterminals)
-            if (!follows.containsKey(nonterm))
-                throw new ParserGeneratorException("Follow set for non-terminal " + nonterm + " is undefined.");
-        */
 
         calculateFirsts();
+        calculateFollows();
         /*for (String nonterm : firsts.keySet()) {
             System.out.print("First(" + nonterm + ") = {");
             for (String x : firsts.get(nonterm))
                 System.out.print("\"" + x + "\", ");
             System.out.println("}");
         }*/
+        /*for (String nonterm : follows.keySet()) {
+            System.out.print("Follow(" + nonterm + ") = {");
+            for (String x : follows.get(nonterm))
+                System.out.print("\"" + x + "\", ");
+            System.out.println("}");
+        }*/
+
+        for (String nonterm : nonterminals)
+            if (follows.get(nonterm).isEmpty())
+                throw new ParserGeneratorException("Non-terminal " + nonterm + " is not reachable.");
     }
 
     public ParseTable generate() throws ParserGeneratorException {
@@ -310,5 +294,56 @@ public class SLRTableGenerator {
             }
 
         } while (isChanged);
+    }
+
+    private void calculateFollows() {
+        follows = new LinkedHashMap<>();
+        for (String nonterm : nonterminals)
+            follows.put(nonterm, new HashSet<>());
+
+        for (Production p : grammar)
+            for (int i = 1; i < p.rhs.length; i ++)
+                if (terminals.contains(p.rhs[i]) && nonterminals.contains(p.rhs[i - 1]))
+                    follows.get(p.rhs[i - 1]).add(p.rhs[i]);
+        follows.get(grammar.get(0).lhs).add("eof");
+
+        boolean isChanged;
+        do {
+            isChanged = false;
+
+            for (Production p : grammar)
+                for (int i = 0; i < p.rhs.length; i ++) {
+                    if (!nonterminals.contains(p.rhs[i]))
+                        continue;
+
+                    boolean didBreak = false;
+                    for (int j = i + 1; j < p.rhs.length; j++) {
+                        if (terminals.contains(p.rhs[j])) {
+                            isChanged |= addAllToFollows(p.rhs[i], new HashSet<>(Arrays.asList(p.rhs[j])));
+                            didBreak = true;
+                            break;
+                        } else { // non-terminal
+                            isChanged |= addAllToFollows(p.rhs[i], firsts.get(p.rhs[j]));
+                            if (!firsts.get(p.rhs[j]).contains("''")) {
+                                didBreak = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!didBreak)
+                        isChanged |= addAllToFollows(p.rhs[i], follows.get(p.lhs));
+                }
+        } while (isChanged);
+    }
+
+    private boolean addAllToFollows(String nonterm, Set<String> s) {
+        boolean addedNew = false;
+        for (String x : s)
+            if (!x.equals("''") && !follows.get(nonterm).contains(x)) {
+                addedNew = true;
+                follows.get(nonterm).add(x);
+            }
+       return addedNew;
     }
 }

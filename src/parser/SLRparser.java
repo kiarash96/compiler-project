@@ -25,8 +25,7 @@ public class SLRparser {
     CodeGenerator cg= new CodeGenerator(symboltable);
 
     public SLRparser(String testname) throws IOException, ParserGeneratorException {
-        this.table = new SLRTableGenerator("grammar/grammar.txt",
-                "grammar/follow.txt").generate();
+        this.table = new SLRTableGenerator("grammar.txt").generate();
         //System.out.println(table);
         this.scanner = new Scanner(new FileInputStream("tests/" + testname + ".c"));
     }

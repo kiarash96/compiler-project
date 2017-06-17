@@ -54,7 +54,6 @@ Factor -> Num
 PUSHNUM -> ''
 PUSHNEGNUM -> ''
 PID -> ''
-JPFUNC -> ''
 JPMAIN -> ''
 NEWID -> ''
 NEWARR -> ''
