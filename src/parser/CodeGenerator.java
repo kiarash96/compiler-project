@@ -70,6 +70,11 @@ public class CodeGenerator {
                 int base=semanticStack.pop();
                 int indexType = ssType.pop();ssType.pop();
                 c=table.findByMemoryAdress(base);
+                if (c == null)
+                    c = table.findByLine(base);
+                if (c.cellType != Cell.Type.Array
+                        && c.cellType != Cell.Type.DynamicArray)
+                    ErrorLogger.printError(ErrorLogger.LEXICAL_ERROR, c.token, "Cannot use [] on identifier");
 
                 if(c.cellType.equals(Cell.Type.DynamicArray)){
                     System.out.println("PARR special case");
@@ -362,6 +367,16 @@ public class CodeGenerator {
                     ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, "main() signature does not match. Input arguments must be void");
                 else
                     //PB.set(op1, "(ASSIGN, "+PB.size()+","+((FunctionCell)table.findByLexeme("main")).returnAdr+")");
+                break;
+
+            case "CHECKID":
+                c = table.findByMemoryAdress(semanticStack.peek());
+                if (c == null)
+                    c = table.findByLine(semanticStack.peek());
+                if (c.cellType == Cell.Type.Array || c.cellType == Cell.Type.DynamicArray)
+                    ErrorLogger.printError(ErrorLogger.LEXICAL_ERROR, c.token, "Identifier is an array and must be used with []");
+                else if (c.cellType == Cell.Type.Function)
+                    ErrorLogger.printError(ErrorLogger.LEXICAL_ERROR, c.token, "Identifier is a function and must be used with ()");
                 break;
         }
     }

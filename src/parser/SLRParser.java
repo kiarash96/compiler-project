@@ -115,6 +115,8 @@ public class SLRParser {
                 return"VOIDRET";
             case 34:
                 return "INTRET";
+            case 35:
+                return "CHECKID";
             case 39:
                 return "AND";
             case 41:
