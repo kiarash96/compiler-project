@@ -62,6 +62,7 @@ public class CodeGenerator {
                 int base=semanticStack.pop();
                 ssType.pop();ssType.pop();
                 c=table.findByMemoryAdress(base);
+
                 if(c.cellType.equals(Cell.Type.DynamicArray)){
                     System.out.println("PARR special case");
                     t=getTemp();
@@ -303,7 +304,8 @@ public class CodeGenerator {
                 fc=((FunctionCell)table.findByLine(semanticStack.peek()));
                 PB.add("(ASSIGN, "+ signedPrint(PB.size()+2, 2)+", "+fc.returnAdr+")"); //Assign Return Address
                 if(inpSize==0){
-                    fc.returnAdr=PB.size();
+                    //fc.returnAdr=PB.size();
+                    //System.out.println("set ret addr to " + fc.returnAdr);
                     PB.add("(JP, "+fc.startingAdr+")");
                 }else{
                     //TODO number of inputs does not match function params
