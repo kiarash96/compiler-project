@@ -5,6 +5,6 @@ int f(int x, int y, int x) {
 
 void main(void) {
     int y;
-    y = f(10);
+    /*y = f(10);*/
 }
 

@@ -68,7 +68,7 @@ public class CodeGenerator {
             case "PARR":
                 int index=semanticStack.pop();
                 int base=semanticStack.pop();
-                ssType.pop();ssType.pop();
+                int indexType = ssType.pop();ssType.pop();
                 c=table.findByMemoryAdress(base);
 
                 if(c.cellType.equals(Cell.Type.DynamicArray)){
@@ -78,9 +78,14 @@ public class CodeGenerator {
                     semanticStack.push(t);
                     ssType.push(3);
                 }else{
-                    adr=base+4*index;
-                    semanticStack.push(adr);
-                    ssType.push(1);
+                    int t1 = getTemp();
+                    int t2 = getTemp();
+                    PB.add("(MULT, #4, "
+                        + signedPrint(index, indexType) + ", " + t1 + ")");
+                    PB.add("(ADD, " + signedPrint(base, 2) + ", "
+                            + t1 + ", " + t2 + ")");
+                    semanticStack.push(t2);
+                    ssType.push(3);
                 }
                 break;
             case "ADD":
