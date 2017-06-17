@@ -38,6 +38,13 @@ public class CodeGenerator {
                 ssType.push(1);
                 break;
             case "NEWARR":
+                size = ((NumberToken) nextToken).getValue();
+                if (size <= 0) {
+                    ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, nextToken, "Array size must be positive");
+                    semanticStack.pop();
+                    ssType.pop();
+                    return;
+                }
                 SymbolTable.memLine+= ((NumberToken)nextToken).getValue()-1;
                 int adr= semanticStack.pop();
                 ssType.pop();
