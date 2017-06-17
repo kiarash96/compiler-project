@@ -13,16 +13,14 @@ import java.util.*;
  */
 public class SLRTableGenerator {
     List<Production> grammar;
-    Map<String, Boolean> isTerminal;
     List<String> terminals, nonterminals;
-    Map<String, List<String>> follows;
+    Map<String, Set<String>> firsts, follows;
     Map<String, Object> lexemeToTokenType;
 
     public SLRTableGenerator(String grammarFile, String followsFile) throws FileNotFoundException, ParserGeneratorException {
         Scanner scanner = new Scanner(new FileInputStream(grammarFile));
 
         grammar = new ArrayList<>();
-        isTerminal = new LinkedHashMap<>();
 
         String lhs = scanner.next();
         scanner.next(); // ->
@@ -50,7 +48,8 @@ public class SLRTableGenerator {
             System.out.println(p);
         System.out.println();*/
 
-        // set isTerminal
+        // detect terminals and nonterminals
+        Map<String, Boolean> isTerminal = new LinkedHashMap<>();
         for (Production p : grammar) {
             isTerminal.put(p.lhs, false);
             for (String x : p.rhs)
@@ -105,7 +104,7 @@ public class SLRTableGenerator {
                 throw new ParserGeneratorException("Terminal " + x + " defined in grammar.txt is unknown.");
 
         // read follows.txt
-        scanner = new Scanner(new FileInputStream(followsFile));
+        /*scanner = new Scanner(new FileInputStream(followsFile));
         follows = new HashMap<>();
         while (scanner.hasNextLine()) {
             StringTokenizer st = new StringTokenizer(scanner.nextLine(), " ");
@@ -130,6 +129,15 @@ public class SLRTableGenerator {
         for (String nonterm : nonterminals)
             if (!follows.containsKey(nonterm))
                 throw new ParserGeneratorException("Follow set for non-terminal " + nonterm + " is undefined.");
+        */
+
+        calculateFirsts();
+        /*for (String nonterm : firsts.keySet()) {
+            System.out.print("First(" + nonterm + ") = {");
+            for (String x : firsts.get(nonterm))
+                System.out.print("\"" + x + "\", ");
+            System.out.println("}");
+        }*/
     }
 
     public ParseTable generate() throws ParserGeneratorException {
@@ -204,21 +212,23 @@ public class SLRTableGenerator {
                 State nextState = s.nextState(grammar, x);
                 int nextIndex = states.indexOf(nextState);
 
-                if (isTerminal.get(x))
+                if (terminals.contains(x))
                     setAction(table, myindex, x, "s" + nextIndex);
                 else
                     table.gotoTable[myindex][nonterminals.indexOf(x)] = nextIndex;
             }
         }
 
+        // fill table.follows
         for (String nonterm : follows.keySet()) {
             int ntindex = nonterminals.indexOf(nonterm);
             table.follows[ntindex] = new Object[follows.get(nonterm).size()];
-            for (int i = 0; i < follows.get(nonterm).size(); i++) {
-                String term = follows.get(nonterm).get(i);
-                table.follows[ntindex][i] = lexemeToTokenType.get(term);
-            }
+            int i = 0;
+            for (String term : follows.get(nonterm))
+                table.follows[ntindex][i ++] = lexemeToTokenType.get(term);
         }
+
+        // fill table.grammar
         table.grammar = new String[grammar.size()][2];
         for (int i = 0; i < grammar.size(); i ++) {
             table.grammar[i][0] = grammar.get(i).lhs;
@@ -253,5 +263,52 @@ public class SLRTableGenerator {
         }
 
         table.actionTable[sindex][terminals.indexOf(term)] = finalAction;
+    }
+
+    private void calculateFirsts() {
+        firsts = new LinkedHashMap<>();
+        for (String nonterm : nonterminals)
+            firsts.put(nonterm, new HashSet<>());
+
+        for (Production p : grammar) {
+            if (p.isEpsilon())
+                firsts.get(p.lhs).add("''");
+            else if (terminals.contains(p.rhs[0]))
+                firsts.get(p.lhs).add(p.rhs[0]);
+        }
+
+        boolean isChanged;
+        do {
+            isChanged = false;
+
+            for (Production p : grammar) {
+                Queue<String> addQ = new LinkedList<>();
+                boolean didBreak = false;
+                for (String rhs : p.rhs)
+                    if (terminals.contains(rhs)) {
+                        addQ.add(rhs);
+                        didBreak = true;
+                        break;
+                    } else { // non-terminal
+                        for (String x : firsts.get(rhs))
+                            if (!x.equals("''"))
+                                addQ.add(x);
+                        if (!firsts.get(rhs).contains("''")) {
+                            didBreak = true;
+                            break;
+                        }
+                    }
+
+                if (!didBreak)
+                    addQ.add("''");
+
+                for (String x : addQ)
+                    if (!firsts.get(p.lhs).contains(x)) {
+                        isChanged = true;
+                        firsts.get(p.lhs).add(x);
+                    }
+            }
+
+        } while (isChanged);
     }
 }
