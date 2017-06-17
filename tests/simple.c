@@ -8,6 +8,6 @@ int main(void) {
     x = 1 + 2;
     output(func());
     x = 3;
-    func();
+    x = func();
     return 0;
 }

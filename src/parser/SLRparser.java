@@ -27,7 +27,7 @@ public class SLRparser {
     public SLRparser(String testname) throws IOException, ParserGeneratorException {
         this.table = new SLRTableGenerator("grammar/grammar.txt",
                 "grammar/follow.txt").generate();
-        System.out.println(table);
+        //System.out.println(table);
         this.scanner = new Scanner(new FileInputStream("tests/" + testname + ".c"));
     }
 

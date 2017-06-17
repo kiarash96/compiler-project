@@ -321,7 +321,7 @@ public class CodeGenerator {
                         semanticStack.push(PB.size()-1);
                         ssType.push(1);
                     }
-                    PB.add("(JP,"+signedPrint(fc.returnAdr, 1)+")");
+                    PB.add("(JP,"+signedPrint(fc.returnAdr, 3)+")");
                 }else{
                     //Err
                 }
@@ -330,7 +330,7 @@ public class CodeGenerator {
                 fc=((FunctionCell)table.findByLine(semanticStack.pop()));
                 ssType.pop();
                 if(fc.retType==FunctionCell.returnType.Void){
-                    PB.add("(JP,"+signedPrint(fc.returnAdr, 1)+")");
+                    PB.add("(JP,"+signedPrint(fc.returnAdr, 3)+")");
                 }else{
                     //Err
                 }
