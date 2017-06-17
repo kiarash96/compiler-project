@@ -54,7 +54,9 @@ public class SymbolTable {
         for (int i=0; i< table.size(); i++){
             IDToken tblToken=table.get(i).token;
             if(tblToken.getLexeme().equals(token.getLexeme())){
-                if(scopeStack.peek()==table.get(i).scope)
+                if(scopeStack.peek()==table.get(i).scope ||
+                        (scopeStack.peek() == table.get(i).scope + 1
+                        && table.get(i).isArg))
                     return true;
             }
         }

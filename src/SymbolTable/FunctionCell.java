@@ -33,12 +33,14 @@ public class FunctionCell extends Cell {
     public void newIntInput(SymbolTable tbl, IDToken token){
         inputNum++;
         Cell c=tbl.findByLexeme(token.getLexeme());
+        c.isArg = true;
         allInputs.add(0,c);
         byValue.add(0,true);
     };
     public void newArrayInput(SymbolTable tbl, IDToken token){
         inputNum++;
         Cell c=tbl.findByLexeme(token.getLexeme());
+        c.isArg = true;
         allInputs.add(0,c);
         byValue.add(0,false);
         c.cellType= Type.DynamicArray;

@@ -7,6 +7,7 @@ public class Cell {
     public IDToken token;
     private int occurredLine;
     public int scope;
+    public boolean isArg = false;
     public int size=1;
     private int memoryAddress;
     public enum Type{
