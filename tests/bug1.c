@@ -4,8 +4,7 @@ void f(void) {
     output(x);
 }
 
-int main(void) {
-    f();
+void main(void) {
 
     return 0;
 }

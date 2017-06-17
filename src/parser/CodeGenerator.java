@@ -1,6 +1,7 @@
 package parser;
 
 import SymbolTable.*;
+import errors.ErrorLogger;
 import lexical.IDToken;
 import lexical.*;
 import lexical.Token;
@@ -317,11 +318,11 @@ public class CodeGenerator {
                 PB.add("(ASSIGN, "+signedPrint(op1, type1)+","+fc.returnValueAdr+")");
                 ssType.pop();
                 if(fc.retType==FunctionCell.returnType.Int){
-                    if(fc.token.getLexeme().equals( "main")){
+                    /*if(fc.token.getLexeme().equals( "main")){
                         PB.add("");
                         semanticStack.push(PB.size()-1);
                         ssType.push(1);
-                    }
+                    }*/
                     PB.add("(JP,"+signedPrint(fc.returnAdr, 3)+")");
                 }else{
                     //Err
@@ -342,7 +343,15 @@ public class CodeGenerator {
             case "EOF":
                 op1=semanticStack.pop();
                 ssType.pop();
-                PB.set(op1, "(ASSIGN, "+PB.size()+","+((FunctionCell)table.findByLexeme("main")).returnAdr+")");
+                fc = (FunctionCell)table.findByLexeme("main");
+                if (fc == null)
+                    ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, "main is not defined.");
+                else if (fc.retType != FunctionCell.returnType.Void)
+                    ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, "main() signature does not match. Return type must be void.");
+                else if (fc.allInputs.size() > 0)
+                    ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, "main() signature does not match. Input arguments must be void");
+                else
+                    PB.set(op1, "(ASSIGN, "+PB.size()+","+((FunctionCell)table.findByLexeme("main")).returnAdr+")");
                 break;
         }
     }

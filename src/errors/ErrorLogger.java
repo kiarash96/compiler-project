@@ -14,4 +14,8 @@ public class ErrorLogger {
         System.out.println(errorType + " in line " + token.getLine() + " column " + (token.getColumn() - 1)
         + " near " + token.getLexeme() + ": " + message);
     }
+
+    public static void printError(String errorType, String message) {
+        System.out.println(errorType + ": " + message);
+    }
 }

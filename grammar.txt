@@ -6,8 +6,8 @@ Declaration -> FunDeclaration
 VarDeclaration -> TypeSpecifier NEWID id ;
 VarDeclaration -> TypeSpecifier NEWID id [ NEWARR num ] ;
 TypeSpecifier -> int
-FunDeclaration -> void NEWID id VOIDFUNC ( Params ) START CompoundStmt
-FunDeclaration -> TypeSpecifier NEWID id INTFUNC JPMAIN ( Params ) START CompoundStmt
+FunDeclaration -> void NEWID id VOIDFUNC JPMAIN ( Params ) START CompoundStmt
+FunDeclaration -> TypeSpecifier NEWID id INTFUNC ( Params ) START CompoundStmt
 Params -> ParamList
 Params -> void
 ParamList -> ParamList , Param
