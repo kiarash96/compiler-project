@@ -10,7 +10,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws IOException {
         try {
-            SLRParser parser = new SLRParser("array-size");
+            SLRParser parser = new SLRParser("func-scope");
             parser.parse();
         } catch (ParserGeneratorException e) {
             System.out.println("Error in generating parse table: " + e.getMessage());

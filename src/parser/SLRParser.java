@@ -48,6 +48,8 @@ public class SLRParser {
             }
             if(action.isEmpty()){
                 ErrorLogger.printError(ErrorLogger.SYNTAX_ERROR, nextToken, "Unexpected token.");
+                if (nextToken.getTokenType() == Token.TokenType.EOF)
+                    break;
                 //System.out.println(cg);
                 panicMode();
 

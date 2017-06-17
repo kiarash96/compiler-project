@@ -348,8 +348,6 @@ public class CodeGenerator {
                 //TODO vaghti inja miad ke to call vorudi hichi nade. check konim vaghean tabe void bashe vorudish
                 break;
             case "EOF":
-                op1=semanticStack.pop();
-                ssType.pop();
                 fc = (FunctionCell)table.findByLexeme("main");
                 if (fc == null)
                     ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, "main is not defined.");

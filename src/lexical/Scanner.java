@@ -23,6 +23,8 @@ public class Scanner {
     private boolean revertFlag;
     private int state;
 
+    private boolean reachEOF = false;
+
     public Scanner(InputStream input) {
         this.input = input;
         line = 1;
@@ -35,6 +37,9 @@ public class Scanner {
     }
 
     public Token getNextToken() throws IOException {
+        if (reachEOF)
+            return new Token(Token.TokenType.EOF);
+
         reset();
 
         while (!nextState()); // go until reaching a final state or error
@@ -49,6 +54,7 @@ public class Scanner {
                 return new NumberToken(getLexeme(), line, column);
 
             case 5:
+                reachEOF = true;
                 return new Token(Token.TokenType.EOF);
 
             case 7:
