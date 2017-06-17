@@ -254,8 +254,7 @@ public class CodeGenerator {
             case "VOIDFUNC":
                 adr =semanticStack.pop();
                 ssType.pop();
-                table.funcAddToTable(adr, FunctionCell.returnType.Void);
-                fc=table.funcAddToTable(adr, FunctionCell.returnType.Int);
+                fc = table.funcAddToTable(adr, FunctionCell.returnType.Void);
                 semanticStack.push(fc.getLine());
                 ssType.push(1);
                 SymbolTable.progLine++;
