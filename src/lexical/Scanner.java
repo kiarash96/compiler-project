@@ -123,7 +123,7 @@ public class Scanner {
 
                 count = input.read(buffer, offset, BUFFER_SIZE / 2);
                 if (count < BUFFER_SIZE / 2)
-                    buffer[offset + count] = 0;
+                    buffer[Math.max(offset, offset + count)] = 0;
             }
         }
 
