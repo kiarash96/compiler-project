@@ -7,7 +7,7 @@ import lexical.Token;
  */
 public class ErrorLogger {
     public static final String LEXICAL_ERROR = "Lexical Error";
-    public static final String SYNTAX_ERRO = "Syntax Error";
+    public static final String SYNTAX_ERROR = "Syntax Error";
     public static final String SEMANTIC_ERROR = "Semantic Error";
 
     public static void printError(String errorType, Token token, String message) {

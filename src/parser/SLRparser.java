@@ -1,6 +1,7 @@
 package parser;
 
 import SymbolTable.SymbolTable;
+import errors.ErrorLogger;
 import lexical.*;
 import lexical.Scanner;
 import parser.generator.ParseTable;
@@ -48,7 +49,7 @@ public class SLRparser {
                 break;
             }
             if(action.isEmpty()){
-                System.out.println("ERROR: wrong input: "+nextToken.getSpecificType()+"\nIgnore it until correct input");
+                ErrorLogger.printError(ErrorLogger.SYNTAX_ERROR, nextToken, "Unexpected token.");
                 if(nextToken.getSpecificType().equals(Token.TokenType.EOF))
                     break;
                 System.out.println(cg);
