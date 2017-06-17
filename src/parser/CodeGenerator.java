@@ -367,7 +367,7 @@ public class CodeGenerator {
     public String toString() {
         String res="Program Block:\n";
         for(int i=0; i<PB.size(); i++){
-            res+=PB.get(i)+"\n";
+            res+=i + ": " + PB.get(i)+"\n";
         }
         return res;
     }
