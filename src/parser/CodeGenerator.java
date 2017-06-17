@@ -351,7 +351,7 @@ public class CodeGenerator {
                 else if (fc.allInputs.size() > 0)
                     ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, "main() signature does not match. Input arguments must be void");
                 else
-                    PB.set(op1, "(ASSIGN, "+PB.size()+","+((FunctionCell)table.findByLexeme("main")).returnAdr+")");
+                    //PB.set(op1, "(ASSIGN, "+PB.size()+","+((FunctionCell)table.findByLexeme("main")).returnAdr+")");
                 break;
         }
     }

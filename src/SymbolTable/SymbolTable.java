@@ -1,5 +1,6 @@
 package SymbolTable;
 
+import errors.ErrorLogger;
 import lexical.IDToken;
 import lexical.Token;
 import java.util.*;
@@ -33,7 +34,8 @@ public class SymbolTable {
 
             if(containsThisScope((IDToken)token)){
                 // TODO Error handling. id declared for second time
-                System.out.println("ERROR:\" "+token.getLexeme()+"\" ID has been declared before in this scope!");
+                ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, token, "ID has been declared before in this scope!");
+                return findByLexeme(token.getLexeme());
             }
             else{
                 Cell n= new Cell((IDToken) token, progLine,scopeStack.peek() ,4*memLine);
