@@ -13,7 +13,7 @@ public class Item {
     }
 
     public boolean isReduce() {
-        return p.isEpsilon || dotPos == p.rhs.length;
+        return dotPos == p.rhs.length;
     }
 
     public String nextSymbol() {

@@ -9,18 +9,19 @@ import java.util.List;
 public class Production {
     String lhs;
     String[] rhs;
-    boolean isEpsilon;
 
     public Production(String lhs, List<String> rhs) {
         this.lhs = new String(lhs);
-        if (rhs.size() == 0 || (rhs.size() == 1 && rhs.get(0).equals("''"))) {
+        if (rhs.size() == 0 || (rhs.size() == 1 && rhs.get(0).equals("''")))
             this.rhs = new String[0];
-            isEpsilon = true;
-        } else {
+        else {
             this.rhs = new String[rhs.size()];
             rhs.toArray(this.rhs);
-            isEpsilon = false;
         }
+    }
+
+    public boolean isEpsilon() {
+        return rhs.length == 0;
     }
 
     @Override
@@ -36,8 +37,7 @@ public class Production {
         if (o instanceof Production) {
             Production other = (Production) o;
             return lhs.equals(other.lhs)
-                    && Arrays.equals(rhs, other.rhs)
-                    && isEpsilon == other.isEpsilon;
+                    && Arrays.equals(rhs, other.rhs);
         }
         else
             return false;
@@ -48,7 +48,6 @@ public class Production {
         int res = lhs.hashCode();
         for (String rhs : rhs)
             res += rhs.hashCode();
-        res += (isEpsilon ? 13 : 0);
         return res;
     }
 }
