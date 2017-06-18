@@ -47,7 +47,11 @@ public class SLRParser {
                 break;
             }
             if(action.isEmpty()){
-                ErrorLogger.printError(ErrorLogger.SYNTAX_ERROR, nextToken, "Unexpected token.");
+                String message = "Unexpected token. expected ";
+                for (int i = 0; i < table.actionTableHead.length; i ++)
+                    if (!table.actionTable[row][i].isEmpty())
+                        message += table.actionTableHead[i].toString() + ", ";
+                ErrorLogger.printError(ErrorLogger.SYNTAX_ERROR, nextToken, message);
                 if (nextToken.getTokenType() == Token.TokenType.EOF)
                     break;
                 //System.out.println(cg);

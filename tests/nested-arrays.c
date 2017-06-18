@@ -12,5 +12,7 @@ void main(void) {
     output(y[0] + y + z);
     output(x[y[2]] + func);
     x[0] = y[x[y[1]] + 5] * 3;
+
+    output(func[]);
 }
 
