@@ -63,7 +63,6 @@ public class SLRParser {
                 case 's':
                     action=action.replace("s","");
                     int state= Integer.parseInt(action);
-                    // TODO: remove progLine
                     if(nextToken.getSpecificType()== SymbolToken.SymbolType.SEMICOLON  || nextToken.getSpecificType()== SymbolToken.SymbolType.OPEN_CURLY_BRACES) {
                         SymbolTable.progLine++; // ezafe shodan yek khat be barname!
                     }
@@ -147,7 +146,6 @@ public class SLRParser {
         return LHS;
     }
 
-    // TODO: refactor
     private void panicMode() throws IOException {
         while (true) {
             int state = (Integer) st.peek();

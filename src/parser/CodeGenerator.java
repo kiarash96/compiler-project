@@ -346,31 +346,32 @@ public class CodeGenerator {
                 }
                 PB.add("(JP, "+fc.startingAdr+")");
                 break;
-            case "INTRET": //TODO return type mathch has ba function return Type
+            case "INTRET":
                 op1=semanticStack.pop();
                 type1=ssType.pop();
                 fc=((FunctionCell)table.findByLine(semanticStack.pop()));
-                PB.add("(ASSIGN, "+signedPrint(op1, type1)+","+fc.returnValueAdr+")");
-                ssType.pop();
                 if(fc.retType==FunctionCell.returnType.Int){
+                    PB.add("(ASSIGN, "+signedPrint(op1, type1)+","+fc.returnValueAdr+")");
+                    ssType.pop();
                     /*if(fc.token.getLexeme().equals( "main")){
                         PB.add("");
                         semanticStack.push(PB.size()-1);
                         ssType.push(1);
                     }*/
-                    PB.add("(JP,"+signedPrint(fc.returnAdr, 3)+")");
                 }else{
-                    //Err
+                    ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, nextToken,
+                            "void function " + fc.token.getLexeme() + " cannot return a value");
                 }
+                PB.add("(JP,"+signedPrint(fc.returnAdr, 3)+")");
                 break;
             case "VOIDRET":
                 fc=((FunctionCell)table.findByLine(semanticStack.pop()));
                 ssType.pop();
-                if(fc.retType==FunctionCell.returnType.Void){
-                    PB.add("(JP,"+signedPrint(fc.returnAdr, 3)+")");
-                }else{
-                    //Err
+                if(fc.retType!=FunctionCell.returnType.Void){
+                    ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, nextToken,
+                            "Missing function " + fc.token.getLexeme() + " return value");
                 }
+                PB.add("(JP,"+signedPrint(fc.returnAdr, 3)+")");
                 break;
             case "VOIDMATCH":
                 //System.out.println("Input size is " + semanticStack.peek());

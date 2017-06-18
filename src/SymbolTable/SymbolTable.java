@@ -8,7 +8,6 @@ import SymbolTable.Cell;
 /**
  * Created by User on 6/11/2017.
  */
-//TODO bara tarife id jadid faghat scope feeli baiad check beshe!!
 public class SymbolTable {
 //    public static int[] Memory= new int [1000];
     public static int progLine=0;
@@ -33,7 +32,6 @@ public class SymbolTable {
         if(token.getTokenType()==Token.TokenType.ID){
 
             if(containsThisScope((IDToken)token)){
-                // TODO Error handling. id declared for second time
                 ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, token, "ID has been declared before in this scope!");
                 return findByLexeme(token.getLexeme());
             }
@@ -45,7 +43,6 @@ public class SymbolTable {
             }
         }else{
             System.out.println("ERROR: invalid ID name. ID name can not be keyword or symbol");
-            //TODO error handle: hazf konim in khato ?
         }
         return null;
     }
