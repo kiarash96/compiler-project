@@ -3,7 +3,7 @@ int f(int x, int y) {
 }
 
 void main(void) {
-    output(f(111, 222));
+    output(f(1, 2, 3));
     return;
 }
 

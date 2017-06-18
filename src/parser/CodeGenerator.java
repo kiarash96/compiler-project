@@ -77,7 +77,7 @@ public class CodeGenerator {
                     c = table.findByLine(base);
                 if (c.cellType != Cell.Type.Array
                         && c.cellType != Cell.Type.DynamicArray)
-                    ErrorLogger.printError(ErrorLogger.LEXICAL_ERROR, c.token, "Cannot use [] on identifier");
+                    ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, c.token, "Cannot use [] on identifier");
 
                 if(c.cellType.equals(Cell.Type.DynamicArray)){
                     int t1 = getTemp();
@@ -334,10 +334,11 @@ public class CodeGenerator {
                 if(inpSize==0){
                     //fc.returnAdr=PB.size();
                     //System.out.println("set ret addr to " + fc.returnAdr);
-                    PB.add("(JP, "+fc.startingAdr+")");
                 }else{
-                    //TODO number of inputs does not match function params
+                    ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, nextToken,
+                            "when calling " + fc.token.getLexeme() + " the number of provided arguments does not match function signature");
                 }
+                PB.add("(JP, "+fc.startingAdr+")");
                 break;
             case "INTRET": //TODO return type mathch has ba function return Type
                 op1=semanticStack.pop();
@@ -366,7 +367,7 @@ public class CodeGenerator {
                 }
                 break;
             case "VOIDMATCH":
-                //TODO vaghti inja miad ke to call vorudi hichi nade. check konim vaghean tabe void bashe vorudish
+                //System.out.println("Input size is " + semanticStack.peek());
                 break;
             case "EOF":
                 fc = (FunctionCell)table.findByLexeme("main");
@@ -386,9 +387,9 @@ public class CodeGenerator {
                 if (c == null)
                     c = table.findByLine(semanticStack.peek());
                 //if (c.cellType == Cell.Type.Array || c.cellType == Cell.Type.DynamicArray)
-                    //ErrorLogger.printError(ErrorLogger.LEXICAL_ERROR, "Identifier " + c.token.getLexeme() + " is an array and must be used with []");
+                    //ErrorLogger.printError(ErrorLogger., "Identifier " + c.token.getLexeme() + " is an array and must be used with []");
                 else if (c.cellType == Cell.Type.Function)
-                    ErrorLogger.printError(ErrorLogger.LEXICAL_ERROR, "Identifier " + c.token.getLexeme() + " is a function and must be used with ()");
+                    ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, "Identifier " + c.token.getLexeme() + " is a function and must be used with ()");
                 break;
         }
     }
