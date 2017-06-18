@@ -319,13 +319,19 @@ public class CodeGenerator {
                 inpSize--;
                 fc=((FunctionCell)table.findByLine(semanticStack.peek()));
 //                System.out.println("INPUT size: "+inpSize);
-                Cell inp=fc.allInputs.get(inpSize);
-                if(fc.byValue.get(inpSize)){ //TODO check konim noe vorudi ha ba int o array tabe mikhune ya na
-                    PB.add("(ASSIGN, "+signedPrint(op1,type1)+","+inp.getMemAdr()+")");
-                }else{
-                    PB.add("(ASSIGN, "+signedPrint(op1,2)+","+inp.getMemAdr()+")");
+                if (inpSize < 0) {
+                    ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, nextToken,
+                            "when calling " + fc.token.getLexeme() + " the number of provided arguments is greater than expected. ignoring excessive args");
+                    semanticStack.push(0);
+                } else {
+                    Cell inp = fc.allInputs.get(inpSize);
+                    if (fc.byValue.get(inpSize)) { //TODO check konim noe vorudi ha ba int o array tabe mikhune ya na
+                        PB.add("(ASSIGN, " + signedPrint(op1, type1) + "," + inp.getMemAdr() + ")");
+                    } else {
+                        PB.add("(ASSIGN, " + signedPrint(op1, 2) + "," + inp.getMemAdr() + ")");
+                    }
+                    semanticStack.push(inpSize);
                 }
-                semanticStack.push(inpSize);
                 break;
             case "JPFUNC":
                 inpSize=semanticStack.pop(); ssType.pop();
@@ -336,7 +342,7 @@ public class CodeGenerator {
                     //System.out.println("set ret addr to " + fc.returnAdr);
                 }else{
                     ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, nextToken,
-                            "when calling " + fc.token.getLexeme() + " the number of provided arguments does not match function signature");
+                            "when calling " + fc.token.getLexeme() + " the number of provided arguments is less than expected");
                 }
                 PB.add("(JP, "+fc.startingAdr+")");
                 break;
