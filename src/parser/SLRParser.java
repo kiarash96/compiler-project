@@ -148,7 +148,7 @@ public class SLRParser {
     }
 
     // TODO: refactor
-    private void panicMode() throws IOException {//shak daaram!
+    private void panicMode() throws IOException {
         while (true) {
             int state = (Integer) st.peek();
             List<Integer> ans = new ArrayList<>();
@@ -191,6 +191,11 @@ public class SLRParser {
                 break; //shak daram!
             } else {
                 st.pop();
+                if(st.size()==0)
+                {
+                    System.out.println("Panic Mode Could not handle this error!");
+                    break;
+                }
                 System.out.println("PANIC MODE: Removed from parser stack: "+ st.pop());
             }
         }
