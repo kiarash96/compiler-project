@@ -332,12 +332,13 @@ public class CodeGenerator {
                                     "Expected value for arg " + fc.allInputs.get(inpSize).token.getLexeme() + ". but got an array " + c.token.getLexeme());
                         else
                             PB.add("(ASSIGN, " + signedPrint(op1, type1) + "," + inp.getMemAdr() + ")");
-                    } else { // TODO: nested pass by ref
-                        if (c == null || (c.cellType != Cell.Type.Array))
+                    } else {
+                        if (c == null || (c.cellType != Cell.Type.Array && c.cellType != Cell.Type.DynamicArray))
                             ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, nextToken,
                                     "Expected array reference for arg " + fc.allInputs.get(inpSize).token.getLexeme() + ". but got a value ");
                         else
-                            PB.add("(ASSIGN, " + signedPrint(op1, 2) + "," + inp.getMemAdr() + ")");
+                            PB.add("(ASSIGN, " + signedPrint(op1, (c.cellType == Cell.Type.Array ? 2 : 3))
+                                    + "," + inp.getMemAdr() + ")");
                     }
                     semanticStack.push(inpSize);
                 }
