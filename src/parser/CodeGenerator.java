@@ -376,9 +376,10 @@ public class CodeGenerator {
                     ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, "main() signature does not match. Return type must be void.");
                 else if (fc.allInputs.size() > 0)
                     ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, "main() signature does not match. Input arguments must be void");
-                else
-                    PB.set(PB.size() - 2, "(ASSIGN, #"+(PB.size()-1)+","+((FunctionCell)table.findByLexeme("main")).returnAdr+")");
-                break;
+                else {
+                    PB.add(PB.get(PB.size() - 1));
+                    PB.set(PB.size() - 2, "(ASSIGN, #" + (PB.size() - 1) + "," + ((FunctionCell) table.findByLexeme("main")).returnAdr + ")");
+                } break;
 
             case "CHECKID":
                 c = table.findByMemoryAdress(semanticStack.peek());
