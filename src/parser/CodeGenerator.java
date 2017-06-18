@@ -325,10 +325,19 @@ public class CodeGenerator {
                     semanticStack.push(0);
                 } else {
                     Cell inp = fc.allInputs.get(inpSize);
-                    if (fc.byValue.get(inpSize)) { //TODO check konim noe vorudi ha ba int o array tabe mikhune ya na
-                        PB.add("(ASSIGN, " + signedPrint(op1, type1) + "," + inp.getMemAdr() + ")");
-                    } else {
-                        PB.add("(ASSIGN, " + signedPrint(op1, 2) + "," + inp.getMemAdr() + ")");
+                    c = table.findByMemoryAdress(op1);
+                    if (fc.byValue.get(inpSize)) {
+                        if (c != null && c.cellType != Cell.Type.Int)
+                            ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, nextToken,
+                                    "Expected value for arg " + fc.allInputs.get(inpSize).token.getLexeme() + ". but got an array " + c.token.getLexeme());
+                        else
+                            PB.add("(ASSIGN, " + signedPrint(op1, type1) + "," + inp.getMemAdr() + ")");
+                    } else { // TODO: nested pass by ref
+                        if (c == null || (c.cellType != Cell.Type.Array))
+                            ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, nextToken,
+                                    "Expected array reference for arg " + fc.allInputs.get(inpSize).token.getLexeme() + ". but got a value ");
+                        else
+                            PB.add("(ASSIGN, " + signedPrint(op1, 2) + "," + inp.getMemAdr() + ")");
                     }
                     semanticStack.push(inpSize);
                 }
