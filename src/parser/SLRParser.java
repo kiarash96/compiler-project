@@ -134,6 +134,8 @@ public class SLRParser {
                 return "SUB";
             case 43:
                 return "ADD";
+            case 51:
+                return "CHECKFUNC";
             case 72:
                 return "JPFUNC";
             case 74:

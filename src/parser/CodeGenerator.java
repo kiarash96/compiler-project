@@ -218,7 +218,6 @@ public class CodeGenerator {
                 }
                 break;
             case "PRINT":
-                //TODO ERROR HANDLING: check if ss[top] is a number it can be void function!!!
                 op1=semanticStack.pop();
                 type1=ssType.pop();
                 PB.add("(PRINT, "+signedPrint(op1,type1)+")");
@@ -407,6 +406,13 @@ public class CodeGenerator {
                     //ErrorLogger.printError(ErrorLogger., "Identifier " + c.token.getLexeme() + " is an array and must be used with []");
                 else if (c.cellType == Cell.Type.Function)
                     ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, "Identifier " + c.token.getLexeme() + " is a function and must be used with ()");
+                break;
+
+            case "CHECKFUNC":
+                fc = (FunctionCell)table.findByLine(semanticStack.peek());
+                if (fc != null && fc.retType == FunctionCell.returnType.Void)
+                    ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, nextToken,
+                            "Cannot use void function " + fc.token.getLexeme() + " in expression");
                 break;
         }
     }
