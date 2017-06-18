@@ -28,7 +28,7 @@ public class Cell {
     @Override
     public String toString() {
         String res="";
-        res+="NAME:"+ token.getLexeme()+", Scope: "+scope+", Memory Address: "+memoryAddress;
+        res+="NAME:"+ token.getLexeme()+", Scope: "+scope+", Memory Address: "+memoryAddress + ", isArg: " + isArg;
         return res;
     }
 

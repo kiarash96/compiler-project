@@ -48,7 +48,7 @@ public class FunctionCell extends Cell {
 
     public String toString() {
         String res=super.toString();
-        res+=byValue;
+        res+=", byValue: " + byValue;
         return res;
     }
 }

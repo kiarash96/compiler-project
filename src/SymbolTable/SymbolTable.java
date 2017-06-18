@@ -18,7 +18,7 @@ public class SymbolTable {
     public FunctionCell currentFunc = null;
 
     public SymbolTable(){
-        scopeStack.add(0);
+        newScope();
     }
 
     public FunctionCell funcAddToTable(int adr, FunctionCell.returnType r){ // tabe ha to memory zakhire nemishan dge?
@@ -30,6 +30,8 @@ public class SymbolTable {
         return cell;
     }
     public Cell addToTable(Token token){
+//        System.out.println("Adding... " + token.getLexeme());
+//        System.out.println(this.toString());
         int a=2;
         if(token.getTokenType()==Token.TokenType.ID){
 
@@ -103,9 +105,10 @@ public class SymbolTable {
         }
         return null;
     }
+    private int cs = 0;
     public int newScope(){
-        scopeStack.push(table.size() );
-        return table.size() ;
+        scopeStack.push(cs ++);
+        return cs;
     }
     public void deleteScope(){
         int lastScope=scopeStack.pop();
@@ -124,7 +127,7 @@ public class SymbolTable {
 
     @Override
     public String toString() {
-        String res = "Symbol Table:";
+        String res = "Symbol Table:\n";
         for( int i=0; i<table.size(); i++){
             res+=i+"th row: "+table.get(i).toString()+"\n";
         }
