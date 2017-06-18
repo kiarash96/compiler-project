@@ -21,8 +21,8 @@ public class FunctionCell extends Cell {
     public int returnAdr;
     public int returnValueAdr;
 
-    public FunctionCell(IDToken token, int line, int scope, int memoryAddress, returnType r) {
-        super(token, line, scope, memoryAddress);
+    public FunctionCell(IDToken token, int scope, int memoryAddress, returnType r) {
+        super(token, scope, memoryAddress);
         this.retType=r;
         returnValueAdr=SymbolTable.memLine*4;
         SymbolTable.memLine++;

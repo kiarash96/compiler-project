@@ -10,7 +10,7 @@ import SymbolTable.Cell;
  */
 public class SymbolTable {
 //    public static int[] Memory= new int [1000];
-    public static int progLine=0;
+    //public static int progLine=0;
     public static int memLine=0;
     public List<Cell> table=new ArrayList<>();
     private static Stack<Integer> scopeStack= new Stack<>();
@@ -23,7 +23,7 @@ public class SymbolTable {
 
     public FunctionCell funcAddToTable(int adr, FunctionCell.returnType r){ // tabe ha to memory zakhire nemishan dge?
         Cell c=removeByAdress(adr);
-        FunctionCell cell= new FunctionCell(c.token,progLine, scopeStack.peek(), -1, r);
+        FunctionCell cell= new FunctionCell(c.token, scopeStack.peek(), -1, r);
         cell.cellType= Cell.Type.Function;
 //        memLine+=1;
         table.add(cell);
@@ -38,7 +38,7 @@ public class SymbolTable {
                 return findByLexeme(token.getLexeme());
             }
             else{
-                Cell n= new Cell((IDToken) token, progLine,scopeStack.peek() ,4*memLine);
+                Cell n= new Cell((IDToken) token, scopeStack.peek() ,4*memLine);
                 memLine+=1;
                 table.add(n);
                 return n;
@@ -93,19 +93,19 @@ public class SymbolTable {
         }
         return null;
     }
-    public Cell findByLine(int l){
+    public Cell findByRetAddr(int l){
         Cell c;
         for (int i=0; i< table.size(); i++){
             c=table.get(i);
-            if(c.getLine()==l){
+            if(c instanceof FunctionCell && ((FunctionCell) c).returnValueAdr==l){
                 return c;
             }
         }
         return null;
     }
     public int newScope(){
-        scopeStack.push(progLine);
-        return progLine;
+        scopeStack.push(table.size() );
+        return table.size() ;
     }
     public void deleteScope(){
         int lastScope=scopeStack.pop();

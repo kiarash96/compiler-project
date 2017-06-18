@@ -63,9 +63,9 @@ public class SLRParser {
                 case 's':
                     action=action.replace("s","");
                     int state= Integer.parseInt(action);
-                    if(nextToken.getSpecificType()== SymbolToken.SymbolType.SEMICOLON  || nextToken.getSpecificType()== SymbolToken.SymbolType.OPEN_CURLY_BRACES) {
-                        SymbolTable.progLine++; // ezafe shodan yek khat be barname!
-                    }
+                    //if(nextToken.getSpecificType()== SymbolToken.SymbolType.SEMICOLON  || nextToken.getSpecificType()== SymbolToken.SymbolType.OPEN_CURLY_BRACES) {
+                        //SymbolTable.progLine++; // ezafe shodan yek khat be barname!
+                    //}
                     nextToken = scanner.getNextToken();
                     st.push(nextToken.getSpecificType());
                     st.push(state);

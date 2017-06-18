@@ -1,7 +1,7 @@
-int x;
+int f(void) {
+    return 123;
+}
 
-int main(void) {
-    int y;
-    x = 10;
-    return 0;
+void main(void) {
+    output(f());
 }

@@ -67,10 +67,14 @@ public class CodeGenerator {
                     semanticStack.push(getTemp());
                     ssType.push(1);
                 } else {
+                    /*System.out.println("PID " + id.token.getLexeme() + " mem is " + id.getMemAdr());
+                    if (id.getMemAdr() == -1) {
+                        System.out.println("line is " + id.getLine());
+                    }*/
                     if (id.getMemAdr() != -1)
                         semanticStack.push(id.getMemAdr());
                     else
-                        semanticStack.push(id.getLine());
+                        semanticStack.push(((FunctionCell) id).returnValueAdr);
                     ssType.push(1);
                 }
                 break;
@@ -80,7 +84,7 @@ public class CodeGenerator {
                 int indexType = ssType.pop();ssType.pop();
                 c=table.findByMemoryAdress(base);
                 if (c == null)
-                    c = table.findByLine(base);
+                    c = table.findByRetAddr(base);
                 if (c.cellType != Cell.Type.Array
                         && c.cellType != Cell.Type.DynamicArray) {
                     ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, nextToken, "Cannot use [] on identifier " + c.token.getLexeme());
@@ -229,7 +233,7 @@ public class CodeGenerator {
                 break;
             case "JPMAIN": // az avale barname beparim be main!
                 int main=semanticStack.peek();
-                Cell mainFunc=table.findByLine(main);
+                Cell mainFunc=table.findByRetAddr(main);
                 if(mainFunc.token.getLexeme().equals("main")){
                     PB.set(1, "(JP, "+PB.size()+")");
                 }
@@ -287,9 +291,9 @@ public class CodeGenerator {
                 ssType.pop();
                 FunctionCell fc=table.funcAddToTable(adr, FunctionCell.returnType.Int);
                 table.currentFunc = fc;
-                semanticStack.push(fc.getLine());
+                semanticStack.push(fc.returnValueAdr);
                 ssType.push(1);
-                SymbolTable.progLine++;
+//                SymbolTable.progLine++;
                 table.newScope();
                 break;
             case "VOIDFUNC":
@@ -297,29 +301,29 @@ public class CodeGenerator {
                 ssType.pop();
                 fc = table.funcAddToTable(adr, FunctionCell.returnType.Void);
                 table.currentFunc = fc;
-                semanticStack.push(fc.getLine());
+                semanticStack.push(fc.returnValueAdr);
                 ssType.push(1);
-                SymbolTable.progLine++;
+                //SymbolTable.progLine++;
                 table.newScope();
                 break;
             case "UPDATE":
                 ssType.pop();
                 newInp= table.findByMemoryAdress(semanticStack.pop()).token;
-                fc=((FunctionCell)table.findByLine(semanticStack.peek()));
+                fc=((FunctionCell)table.findByRetAddr(semanticStack.peek()));
                 fc.newIntInput(table, newInp);
                 break;
             case "UPDATEARR":
                 ssType.pop();
                 newInp= table.findByMemoryAdress(semanticStack.pop()).token;
-                fc=((FunctionCell)table.findByLine(semanticStack.peek()));
+                fc=((FunctionCell)table.findByRetAddr(semanticStack.peek()));
                 fc.newArrayInput(table, newInp);
                 break;
             case "START":
-                fc=((FunctionCell)table.findByLine(semanticStack.peek()));
+                fc=((FunctionCell)table.findByRetAddr(semanticStack.peek()));
                 fc.startingAdr=PB.size();
                 break;
             case "SET":
-                fc=((FunctionCell)table.findByLine(semanticStack.peek()));
+                fc=((FunctionCell)table.findByRetAddr(semanticStack.peek()));
                 if (fc == null) {
                     ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, nextToken,
                             "Identifier " + table.findByMemoryAdress(semanticStack.peek()).token.getLexeme() + " is not a function");
@@ -337,7 +341,7 @@ public class CodeGenerator {
                 type1=ssType.pop();
                 inpSize=semanticStack.pop();
                 inpSize--;
-                fc=((FunctionCell)table.findByLine(semanticStack.peek()));
+                fc=((FunctionCell)table.findByRetAddr(semanticStack.peek()));
 //                System.out.println("INPUT size: "+inpSize);
                 if (inpSize < 0) {
                     ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, nextToken,
@@ -365,7 +369,7 @@ public class CodeGenerator {
                 break;
             case "JPFUNC":
                 inpSize=semanticStack.pop(); ssType.pop();
-                fc=((FunctionCell)table.findByLine(semanticStack.peek()));
+                fc=((FunctionCell)table.findByRetAddr(semanticStack.peek()));
                 if (fc == null)
                     break;
                 PB.add("(ASSIGN, "+ signedPrint(PB.size()+2, 2)+", "+fc.returnAdr+")"); //Assign Return Address
@@ -410,19 +414,18 @@ public class CodeGenerator {
                 fc = (FunctionCell)table.findByLexeme("main");
                 if (fc == null)
                     ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, "main is not defined.");
-                else {
-                    if (fc.retType != FunctionCell.returnType.Void)
-                        ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, "main() signature does not match. Return type must be void.");
-                    else if (fc.allInputs.size() > 0)
-                        ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, "main() signature does not match. Input arguments must be void");
+                else if (fc.retType != FunctionCell.returnType.Void)
+                    ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, "main() signature does not match. Return type must be void.");
+                else if (fc.allInputs.size() > 0)
+                    ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, "main() signature does not match. Input arguments must be void");
+                else
                     PB.set(0, "(ASSIGN, #" + (PB.size() - 1) + "," + ((FunctionCell) table.findByLexeme("main")).returnAdr + ")");
-                }
                 break;
 
             case "CHECKID":
                 c = table.findByMemoryAdress(semanticStack.peek());
                 if (c == null)
-                    c = table.findByLine(semanticStack.peek());
+                    c = table.findByRetAddr(semanticStack.peek());
                 //if (c.cellType == Cell.Type.Array || c.cellType == Cell.Type.DynamicArray)
                     //ErrorLogger.printError(ErrorLogger., "Identifier " + c.token.getLexeme() + " is an array and must be used with []");
                 else if (c.cellType == Cell.Type.Function)
@@ -430,7 +433,7 @@ public class CodeGenerator {
                 break;
 
             case "CHECKFUNC":
-                fc = (FunctionCell)table.findByLine(semanticStack.peek());
+                fc = (FunctionCell)table.findByRetAddr(semanticStack.peek());
                 if (fc != null && fc.retType == FunctionCell.returnType.Void)
                     ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, nextToken,
                             "Cannot use void function " + fc.token.getLexeme() + " in expression");
