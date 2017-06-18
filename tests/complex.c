@@ -1,7 +1,7 @@
-int abc/**//*salaaam*/efg;
+int abc;
 int efg;
 int arr[200];
-int main(int x, int y[]) {
+void main(void) {
     int p[100];
     p[-140 + 2050/5] = 10 * 39 + -40;
     abc = 20;
@@ -12,11 +12,5 @@ int main(int x, int y[]) {
              abc = abc + 1;
              arr[0] = arr[312] - 1;
         }
-    }
-    return 0;
-    234abc} void
-    int a = 12+ + 32;
-    int b = 12 +3;
-    if ( a &= b)
-    +bs^
+    return;
 }

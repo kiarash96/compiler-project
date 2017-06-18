@@ -8,5 +8,6 @@ void main(void) {
     int y;
     x[5] = 50;
     output(f(x, y));
+    return;
 }
 
