@@ -296,10 +296,15 @@ public class CodeGenerator {
                 break;
             case "SET":
                 fc=((FunctionCell)table.findByLine(semanticStack.peek()));
-                inpSize=fc.inputNum;
-                semanticStack.push(inpSize);
-                ssType.push(inpSize);
+                if (fc == null) {
+                    ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, table.findByMemoryAdress(semanticStack.peek()).token,
+                            "Identifier is not a function");
+                } else {
+                    inpSize = fc.inputNum;
+                    semanticStack.push(inpSize);
+                    ssType.push(inpSize);
 //                System.out.println("INPUT size: "+inpSize);
+                }
                 break;
             case "FUNCINP":
                 op1=semanticStack.pop();
