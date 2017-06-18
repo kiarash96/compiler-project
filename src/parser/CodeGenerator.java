@@ -57,13 +57,16 @@ public class CodeGenerator {
                 ssType.pop();
                 break;
             case "PID":
-                // tarif shodane ghablesh check beshe
                 Cell id=table.findByLexeme(((IDToken)nextToken).getLexeme());
-                if(id.getMemAdr()!=-1)
-                    semanticStack.push(id.getMemAdr());
-                else
-                    semanticStack.push(id.getLine());
-                ssType.push(1);
+                if (id == null)
+                    ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, nextToken, "Identifier is not defined.");
+                else {
+                    if (id.getMemAdr() != -1)
+                        semanticStack.push(id.getMemAdr());
+                    else
+                        semanticStack.push(id.getLine());
+                    ssType.push(1);
+                }
                 break;
             case "PARR":
                 int index=semanticStack.pop();
@@ -77,10 +80,13 @@ public class CodeGenerator {
                     ErrorLogger.printError(ErrorLogger.LEXICAL_ERROR, c.token, "Cannot use [] on identifier");
 
                 if(c.cellType.equals(Cell.Type.DynamicArray)){
-                    System.out.println("PARR special case");
-                    t=getTemp();
-                    PB.add("(ADD, "+signedPrint(base,3)+","+(index*4)+", "+t+")");
-                    semanticStack.push(t);
+                    int t1 = getTemp();
+                    int t2 = getTemp();
+                    PB.add("(MULT, #4, "
+                            + signedPrint(index, indexType) + ", " + t1 + ")");
+                    PB.add("(ADD, " + signedPrint(base, 3) + ", "
+                            + t1 + ", " + t2 + ")");
+                    semanticStack.push(t2);
                     ssType.push(3);
                 }else{
                     int t1 = getTemp();
@@ -378,10 +384,10 @@ public class CodeGenerator {
                 c = table.findByMemoryAdress(semanticStack.peek());
                 if (c == null)
                     c = table.findByLine(semanticStack.peek());
-                if (c.cellType == Cell.Type.Array || c.cellType == Cell.Type.DynamicArray)
-                    ErrorLogger.printError(ErrorLogger.LEXICAL_ERROR, c.token, "Identifier is an array and must be used with []");
+                //if (c.cellType == Cell.Type.Array || c.cellType == Cell.Type.DynamicArray)
+                    //ErrorLogger.printError(ErrorLogger.LEXICAL_ERROR, "Identifier " + c.token.getLexeme() + " is an array and must be used with []");
                 else if (c.cellType == Cell.Type.Function)
-                    ErrorLogger.printError(ErrorLogger.LEXICAL_ERROR, c.token, "Identifier is a function and must be used with ()");
+                    ErrorLogger.printError(ErrorLogger.LEXICAL_ERROR, "Identifier " + c.token.getLexeme() + " is a function and must be used with ()");
                 break;
         }
     }
