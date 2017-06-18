@@ -95,9 +95,8 @@ public class SLRParser {
             case 5:
                 return "POP";
             case 8:
-                return "BLOCKE";
             case 9:
-                return "BLOCKE";
+                return "FUNEND";
             case 14:
                 return "UPDATE";
             case 15:

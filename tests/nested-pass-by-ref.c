@@ -1,11 +1,11 @@
 int g(int z[]) {
     output(z[3]);
-    return z[13];
+    /*return z[13];*/
 }
 
 int f(int x[], int y) {
     x[3] = y;
-    return g(x);
+    /*return g(x);*/
 }
 
 void h(void) {
@@ -21,6 +21,6 @@ void main(void) {
     output(y);
     output(f(x, y));
     output(h());
-    return;
+    /*return;*/
 }
 

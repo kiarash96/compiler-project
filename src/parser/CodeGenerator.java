@@ -20,6 +20,7 @@ public class CodeGenerator {
     private SymbolTable table;
     public static int tempMem=500;
     public CodeGenerator(){
+        PB.add(""); // reserve to set main return addr
         PB.add("");//reserve to jump to main in future
         this.table= new SymbolTable();
     }
@@ -214,7 +215,7 @@ public class CodeGenerator {
                 int main=semanticStack.peek();
                 Cell mainFunc=table.findByLine(main);
                 if(mainFunc.token.getLexeme().equals("main")){
-                    PB.set(0, "(JP, "+PB.size()+")");
+                    PB.set(1, "(JP, "+PB.size()+")");
                 }
                 break;
             case "PRINT":
@@ -269,6 +270,7 @@ public class CodeGenerator {
                 adr =semanticStack.pop();
                 ssType.pop();
                 FunctionCell fc=table.funcAddToTable(adr, FunctionCell.returnType.Int);
+                table.currentFunc = fc;
                 semanticStack.push(fc.getLine());
                 ssType.push(1);
                 SymbolTable.progLine++;
@@ -278,6 +280,7 @@ public class CodeGenerator {
                 adr =semanticStack.pop();
                 ssType.pop();
                 fc = table.funcAddToTable(adr, FunctionCell.returnType.Void);
+                table.currentFunc = fc;
                 semanticStack.push(fc.getLine());
                 ssType.push(1);
                 SymbolTable.progLine++;
@@ -358,10 +361,9 @@ public class CodeGenerator {
             case "INTRET":
                 op1=semanticStack.pop();
                 type1=ssType.pop();
-                fc=((FunctionCell)table.findByLine(semanticStack.pop()));
+                fc= table.currentFunc;
                 if(fc.retType==FunctionCell.returnType.Int){
                     PB.add("(ASSIGN, "+signedPrint(op1, type1)+","+fc.returnValueAdr+")");
-                    ssType.pop();
                     /*if(fc.token.getLexeme().equals( "main")){
                         PB.add("");
                         semanticStack.push(PB.size()-1);
@@ -374,8 +376,7 @@ public class CodeGenerator {
                 PB.add("(JP,"+signedPrint(fc.returnAdr, 3)+")");
                 break;
             case "VOIDRET":
-                fc=((FunctionCell)table.findByLine(semanticStack.pop()));
-                ssType.pop();
+                fc= table.currentFunc;
                 if(fc.retType!=FunctionCell.returnType.Void){
                     ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, nextToken,
                             "Missing function " + fc.token.getLexeme() + " return value");
@@ -394,8 +395,7 @@ public class CodeGenerator {
                 else if (fc.allInputs.size() > 0)
                     ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, "main() signature does not match. Input arguments must be void");
                 else {
-                    PB.add(PB.get(PB.size() - 1));
-                    PB.set(PB.size() - 2, "(ASSIGN, #" + (PB.size() - 1) + "," + ((FunctionCell) table.findByLexeme("main")).returnAdr + ")");
+                    PB.set(0, "(ASSIGN, #" + (PB.size() - 1) + "," + ((FunctionCell) table.findByLexeme("main")).returnAdr + ")");
                 } break;
 
             case "CHECKID":
@@ -413,6 +413,12 @@ public class CodeGenerator {
                 if (fc != null && fc.retType == FunctionCell.returnType.Void)
                     ErrorLogger.printError(ErrorLogger.SEMANTIC_ERROR, nextToken,
                             "Cannot use void function " + fc.token.getLexeme() + " in expression");
+                break;
+
+            case "FUNEND":
+                fc= table.currentFunc;
+                PB.add("(JP,"+signedPrint(fc.returnAdr, 3)+")");
+                this.TACgenerate("BLCOKE", nextToken);
                 break;
         }
     }

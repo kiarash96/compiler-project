@@ -15,6 +15,8 @@ public class SymbolTable {
     public List<Cell> table=new ArrayList<>();
     private static Stack<Integer> scopeStack= new Stack<>();
 
+    public FunctionCell currentFunc = null;
+
     public SymbolTable(){
         scopeStack.add(0);
     }
